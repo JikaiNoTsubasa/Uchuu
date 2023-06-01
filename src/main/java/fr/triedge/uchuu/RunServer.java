@@ -16,4 +16,5 @@ public class RunServer extends SpringBootServletInitializer {
         app.setDefaultProperties(prop);
         app.run(args);
     }
+
 }

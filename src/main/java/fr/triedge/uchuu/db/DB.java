@@ -1,9 +1,11 @@
 package fr.triedge.uchuu.db;
 
 import com.idorsia.research.sbilib.utils.SPassword;
-import fr.triedge.uchuu.model.User;
+import fr.triedge.uchuu.model.*;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class DB {
 
@@ -84,6 +86,131 @@ public class DB {
         User user = new User();
         user.setId(res.getInt("user_id"));
         user.setUsername(res.getString("user_name"));
+        user.setLevel(res.getInt("user_level"));
+        user.setXp(res.getInt("user_xp"));
         return user;
+    }
+
+    public ArrayList<Quest> getAllQuests() throws SQLException {
+        ArrayList<Quest> quests = new ArrayList<>();
+        String sql = "select * from quest order by quest_level";
+        PreparedStatement stmt = getConnection().prepareStatement(sql);
+        ResultSet res = stmt.executeQuery();
+        while (res.next()){
+            Quest q = new Quest();
+            q.setId(res.getInt("quest_id"));
+            q.setName(res.getString("quest_name"));
+            q.setDescription(res.getString("quest_description"));
+            q.setLevel(res.getInt("quest_level"));
+            q.setDuration(res.getInt("quest_duration_min"));
+            q.setXp(res.getInt("quest_xp"));
+            q.setDrops(getDropsForQuest(q.getId()));
+            quests.add(q);
+        }
+        res.close();
+        stmt.close();
+        return quests;
+    }
+
+    public ArrayList<Drop> getDropsForQuest(int questId) throws SQLException {
+        ArrayList<Drop> drops = new ArrayList<>();
+        String sql = "select * from quest_drop left join item on drop_item=item_id where drop_quest=?";
+        PreparedStatement stmt = getConnection().prepareStatement(sql);
+        stmt.setInt(1, questId);
+        ResultSet res = stmt.executeQuery();
+        while (res.next()){
+            Drop d = new Drop();
+            Item i = new Item();
+            i.setId(res.getInt("item_id"));
+            i.setName(res.getString("item_name"));
+            i.setValue(res.getFloat("item_value"));
+            i.setDescription(res.getString("item_description"));
+
+            d.setItem(i);
+            d.setId(res.getInt("drop_id"));
+            d.setChance(res.getFloat("drop_chance"));
+            d.setMin(res.getInt("drop_amount_min"));
+            d.setMax(res.getInt("drop_amount_max"));
+            drops.add(d);
+        }
+        res.close();
+        stmt.close();
+        return drops;
+    }
+
+    public boolean startQuestForUser(int userId, int questId) throws SQLException {
+        Quest quest = Model.getInstance().getQuest(questId);
+        if (quest == null)
+            throw new RuntimeException("Quest cannot be null");
+        String sql = "select * from user_quest where uq_user=? order by uq_order asc";
+        PreparedStatement stmt = getConnection().prepareStatement(sql);
+        stmt.setInt(1, userId);
+        ResultSet res = stmt.executeQuery();
+        int order = 0;
+        boolean isQuestalreadRunning = false;
+        Timestamp ts = new Timestamp(new java.util.Date().getTime());
+        while (res.next()){
+            order = res.getInt("uq_order") + 1;
+            ts = res.getTimestamp("uq_start_time");
+            int qId = res.getInt("uq_quest");
+            if (questId == qId)
+                isQuestalreadRunning = true;
+        }
+        res.close();
+        stmt.close();
+
+        if (isQuestalreadRunning)
+            return false;
+
+        String ins = "insert into user_quest(uq_user,uq_quest,uq_order,uq_start_time)values(?,?,?,?)";
+        stmt = getConnection().prepareStatement(ins);
+        stmt.setInt(1, userId);
+        stmt.setInt(2, questId);
+        stmt.setInt(3, order);
+
+        long mins = TimeUnit.MILLISECONDS.toMinutes(ts.getTime()) + quest.getDuration();
+        long millis = TimeUnit.MINUTES.toMillis(mins);
+        stmt.setTimestamp(4, new Timestamp(millis));
+
+        stmt.executeUpdate();
+        stmt.close();
+
+        return true;
+    }
+
+    /**
+     *
+     * @param userId
+     * @param questId
+     * @return 0 - If no quest found<br>1 - If current quest is in quest list<br>-1 - If quest found but not current one
+     * @throws SQLException
+     */
+    public int isUserInQuest(int userId, int questId) throws SQLException {
+        String sql = "select * from user_quest where uq_user=?";
+        PreparedStatement stmt = getConnection().prepareStatement(sql);
+        stmt.setInt(1, userId);
+        int count = 0;
+        boolean currentQuest = false;
+        ResultSet res = stmt.executeQuery();
+        while (res.next()){
+            count++;
+            if (questId == res.getInt("uq_quest")){
+                currentQuest = true;
+            }
+        }
+        res.close();
+        stmt.close();
+
+        if (currentQuest)
+            return 1;
+        if (count == 0)
+            return 0;
+        return -1;
+    }
+
+    public int isUserInQuest(User user, int questId) throws SQLException {
+        if (user == null)
+            throw new RuntimeException("User can't be null");
+        return isUserInQuest(user.getId(), questId);
     }
 }

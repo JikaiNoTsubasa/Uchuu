@@ -1,4 +1,4 @@
-package fr.triedge.uchuu.auth;
+package fr.triedge.uchuu.beans;
 
 import com.idorsia.research.sbilib.utils.SPassword;
 import fr.triedge.uchuu.db.DB;

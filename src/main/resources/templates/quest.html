@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.w3.org/1999/html">
+<head>
+    <title>Title</title>
+    <th:block th:include="fragments::meta"></th:block>
+</head>
+<body>
+    <div th:if="${error}">
+        <span style="color:red" th:text="${error}"></span>
+    </div>
+    <a class="u-button" href="home">HOME</a>
+    <div th:if="${quest != null}" style="margin: 50px; border: 1px solid #222222; padding: 10px; display: block;">
+        <h1 th:text="${quest.name}"></h1>
+        Niveau: <span th:text="${quest.level}"></span> - Durée: <span th:text="${quest.durationDisplay}"></span><br>
+        <p th:text="${quest.description}"></p><br>
+        XP: <span th:text="${quest.xp}"></span>
+        <h3>Drops:</h3>
+        <table>
+            <tr th:each="d:${quest.drops}">
+                <td th:text="${d.item.name}"></td>
+                <td th:text="@{${'['+d.min+'-'+d.max+']'}}"></td>
+                <td th:text="@{${d.chance+'%'}}"></td>
+            </tr>
+        </table>
+        <a th:if="${noquest}" th:href="@{${'queststart?id='+quest.id}}" class="u-button">Lancer la quête</a>
+        <a th:if="${anotherQuest}" th:href="@{${'queststart?id='+quest.id}}" class="u-button">Ajouter à la liste</a>
+        <span th:if="${currentQuest}" class="u-button-disabled">Quête déjâ lancée</span>
+        <span style="color:red;" th:text="${error}" th:if="${error != null}"></span>
+    </div>
+</body>
+</html>
