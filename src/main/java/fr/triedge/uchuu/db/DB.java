@@ -125,6 +125,7 @@ public class DB {
             i.setName(res.getString("item_name"));
             i.setValue(res.getFloat("item_value"));
             i.setDescription(res.getString("item_description"));
+            i.setImg(res.getString("item_img"));
 
             d.setItem(i);
             d.setId(res.getInt("drop_id"));

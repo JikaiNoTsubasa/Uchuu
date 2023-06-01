@@ -2,8 +2,16 @@ package fr.triedge.uchuu.model;
 
 public class Item {
     private int id;
-    private String name, description;
+    private String name, description, img;
     private float value;
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
+    }
 
     public String getDescription() {
         return description;
