@@ -47,6 +47,15 @@ create table user_quest(
     foreign key (uq_quest) references quest(quest_id)
 )ENGINE=InnoDB;
 
+create table inventory(
+    inv_id INT AUTO_INCREMENT PRIMARY KEY,
+    inv_user int,
+    inv_item int,
+    inv_amount int,
+    foreign key (inv_user) references user(user_id),
+    foreign key (inv_item) references item(item_id)
+)ENGINE=InnoDB;
+
 insert into item(item_name, item_value, item_description)
 values
     ('Bois', 1.0, 'Un morceau de bois');

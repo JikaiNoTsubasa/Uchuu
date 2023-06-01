@@ -2,6 +2,7 @@ package fr.triedge.uchuu.db;
 
 import com.idorsia.research.sbilib.utils.SPassword;
 import fr.triedge.uchuu.model.*;
+import fr.triedge.uchuu.utils.Utils;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -219,6 +220,72 @@ public class DB {
         res.close();
         stmt.close();
         return rq;
+    }
+
+    public void removeRunningQuest(int userId, int questId) throws SQLException{
+        String sql = "delete from user_quest where uq_user=? and uq_quest=?";
+        PreparedStatement stmt = getConnection().prepareStatement(sql);
+        stmt.setInt(1, userId);
+        stmt.setInt(2,questId);
+        stmt.executeUpdate();
+        stmt.close();
+    }
+
+    public void validateQuest(int userId, Quest quest) throws SQLException {
+        if (quest == null)
+            return;
+
+        for (Drop d : quest.getDrops()){
+            float chance = d.getChance();
+            float rnd = Utils.getRandomNumber(0f, 100f);
+            if (rnd <= chance){
+                // Get drop
+                int amount = Utils.getRandomNumber(d.getMin(), d.getMax());
+                if (amount > 0){
+                    addToInventory(userId, d.getItem().getId(), amount);
+                }
+            }
+        }
+
+        removeRunningQuest(userId, quest.getId());
+    }
+
+    public void addToInventory(int userId, int itemId, int amount) throws SQLException {
+        // Check if item already in inventory
+        String sqlInInv = "select * from inventory where inv_user=? and inv_item=?";
+        PreparedStatement stmt = getConnection().prepareStatement(sqlInInv);
+        stmt.setInt(1, userId);
+        stmt.setInt(2, itemId);
+
+        InventoryItem invItem = null;
+        ResultSet res = stmt.executeQuery();
+        while (res.next()){
+            invItem = new InventoryItem();
+            invItem.setId(res.getInt("inv_id"));
+            invItem.setUserId(res.getInt("inv_user"));
+            invItem.setItemId(res.getInt("inv_item"));
+            invItem.setAmount(res.getInt("inv_amount"));
+        }
+        res.close();
+        stmt.close();
+
+        if (invItem != null){
+            String sqlUpdate = "update inventory set inv_amount=inv_amount+? where inv_user=? and inv_item=?";
+            stmt = getConnection().prepareStatement(sqlUpdate);
+            stmt.setInt(1, amount);
+            stmt.setInt(2, userId);
+            stmt.setInt(3, itemId);
+            stmt.executeUpdate();
+            stmt.close();
+        }else{
+            String sqlInsert = "insert into inventory(inv_user,inv_item,inv_amount)values(?,?,?)";
+            stmt = getConnection().prepareStatement(sqlInsert);
+            stmt.setInt(1, userId);
+            stmt.setInt(2, itemId);
+            stmt.setInt(3, amount);
+            stmt.executeUpdate();
+            stmt.close();
+        }
     }
 
 }

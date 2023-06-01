@@ -80,6 +80,31 @@ public class QuestController {
         return new ModelAndView("redirect:home");
     }
 
+    @RequestMapping(path = Vars.QUEST_FINISHED, method = {RequestMethod.GET})
+    public ModelAndView questFinished(@RequestParam(value = "id")Integer id){
+        ModelAndView model = new ModelAndView("");
+        if (Utils.isValid(id)){
+            User user = (User)getSession().getAttribute("user");
+            Quest quest = Model.getInstance().getQuest(id);
+            try {
+                RunningQuest rQuest = DB.getInstance().getRuningQuest(user.getId(), quest.getId());
+                if (rQuest != null){
+                    if (rQuest.isFinished()){
+                        DB.getInstance().validateQuest(user.getId(), quest);
+                        //model.addObject("message", "Quête validée."); // TODO validation report
+                        return new ModelAndView("redirect:home");
+                    }
+                }else{
+                    return new ModelAndView("redirect:home");
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+        return model;
+    }
+
     private boolean conditionMet(Quest quest){
         if (quest == null)
             return false;
