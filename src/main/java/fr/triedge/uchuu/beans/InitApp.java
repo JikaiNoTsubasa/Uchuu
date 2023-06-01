@@ -1,10 +1,10 @@
 package fr.triedge.uchuu.beans;
 
 import fr.triedge.uchuu.model.Model;
+import jakarta.annotation.PostConstruct;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.sql.SQLException;
 
 @Component

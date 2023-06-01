@@ -3,22 +3,23 @@ package fr.triedge.uchuu.api;
 import fr.triedge.uchuu.db.DB;
 import fr.triedge.uchuu.model.Model;
 import fr.triedge.uchuu.model.Quest;
+import fr.triedge.uchuu.model.RunningQuest;
 import fr.triedge.uchuu.model.User;
 import fr.triedge.uchuu.utils.Utils;
 import fr.triedge.uchuu.utils.Vars;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.sql.SQLException;
 
-@Controller
+@RestController
 public class QuestController {
 
     @RequestMapping(path = Vars.VIEW_QUEST, method = {RequestMethod.GET})
@@ -30,13 +31,22 @@ public class QuestController {
             if (conditionMet(quest)){
                 model.addObject("quest", quest);
                 try {
-                    int res = DB.getInstance().isUserInQuest(user, id);
-                    if (res == 0){
-                        model.addObject("noquest", true);
-                    }else if(res > 0){
-                        model.addObject("currentQuest", true);
+                    boolean isInQuest = DB.getInstance().isUserInQuest(user);
+                    RunningQuest rQuest = DB.getInstance().getRuningQuest(user.getId(), quest.getId());
+                    if (rQuest != null){
+                        if (rQuest.isFinished()){
+                            model.addObject("finished", true);
+                        }else{
+                            // Current quest is running, display countdown
+                            model.addObject("currentQuest", true);
+                            model.addObject("endTime", rQuest.getEndTime());
+                        }
                     }else{
-                        model.addObject("anotherQuest", true);
+                        if (isInQuest){
+                            model.addObject("anotherQuest", true);
+                        }else{
+                            model.addObject("noquest", true);
+                        }
                     }
                 } catch (SQLException e) {
                     throw new RuntimeException(e);

@@ -5,10 +5,10 @@
     <th:block th:include="fragments::meta"></th:block>
 </head>
 <body>
+    <a class="u-button" href="home">HOME</a>
     <div th:if="${error}">
         <span style="color:red" th:text="${error}"></span>
     </div>
-    <a class="u-button" href="home">HOME</a>
     <div th:if="${quest != null}" style="margin: 50px; border: 1px solid #222222; padding: 10px; display: block;">
         <h1 th:text="${quest.name}"></h1>
         Niveau: <span th:text="${quest.level}"></span> - Durée: <span th:text="${quest.durationDisplay}"></span><br>
@@ -23,10 +23,44 @@
                 <td th:text="@{${d.chance+'%'}}"></td>
             </tr>
         </table>
+        <br><br>
+        <a th:if="${finished}" th:href="@{${'questfinished?id='+quest.id}}" class="u-button-finished">Récupérer</a>
+        <a style="display:none;" th:href="@{${'questfinished?id='+quest.id}}" class="u-button-finished">Récupérer</a>
         <a th:if="${noquest}" th:href="@{${'queststart?id='+quest.id}}" class="u-button">Lancer la quête</a>
-        <a th:if="${anotherQuest}" th:href="@{${'queststart?id='+quest.id}}" class="u-button">Ajouter à la liste</a>
-        <span th:if="${currentQuest}" class="u-button-disabled">Quête déjâ lancée</span>
-        <span style="color:red;" th:text="${error}" th:if="${error != null}"></span>
+        <span th:if="${anotherQuest}" class="u-button-disabled">Une autre quête est en cours</span>
+        <span th:if="${currentQuest}" class="u-button-disabled" id="countdown"></span>
     </div>
+
+    <script th:if="${currentQuest}" th:inline="javascript">
+
+        var endTime = /*[[${endTime}]]*/ '0';
+        console.log(endTime);
+
+        // Update the count down every 1 second
+        var x = setInterval(function() {
+
+            // Get today's date and time
+            var now = new Date().getTime();
+
+            // Find the distance between now and the count down date
+            var distance = countDownDate - now;
+
+            // Time calculations for days, hours, minutes and seconds
+            var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // Display the result in the element with id="demo"
+            $("#countdown").html(days + "d " + hours + "h " + minutes + "m " + seconds + "s ");
+
+            // If the count down is finished, write some text
+            if (distance < 0) {
+                clearInterval(x);
+                $("#finished").show();
+            }
+        }, 1000);
+
+    </script>
 </body>
 </html>

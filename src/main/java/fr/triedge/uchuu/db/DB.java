@@ -152,7 +152,7 @@ public class DB {
         Timestamp ts = new Timestamp(new java.util.Date().getTime());
         while (res.next()){
             order = res.getInt("uq_order") + 1;
-            ts = res.getTimestamp("uq_start_time");
+            ts = res.getTimestamp("uq_end_time");
             int qId = res.getInt("uq_quest");
             if (questId == qId)
                 isQuestalreadRunning = true;
@@ -163,7 +163,7 @@ public class DB {
         if (isQuestalreadRunning)
             return false;
 
-        String ins = "insert into user_quest(uq_user,uq_quest,uq_order,uq_start_time)values(?,?,?,?)";
+        String ins = "insert into user_quest(uq_user,uq_quest,uq_order,uq_end_time)values(?,?,?,?)";
         stmt = getConnection().prepareStatement(ins);
         stmt.setInt(1, userId);
         stmt.setInt(2, questId);
@@ -179,39 +179,44 @@ public class DB {
         return true;
     }
 
-    /**
-     *
-     * @param userId
-     * @param questId
-     * @return 0 - If no quest found<br>1 - If current quest is in quest list<br>-1 - If quest found but not current one
-     * @throws SQLException
-     */
-    public int isUserInQuest(int userId, int questId) throws SQLException {
-        String sql = "select * from user_quest where uq_user=?";
+    public boolean isUserInQuest(int userId) throws SQLException {
+        String sql = "select count(*) from user_quest where uq_user=?";
         PreparedStatement stmt = getConnection().prepareStatement(sql);
         stmt.setInt(1, userId);
         int count = 0;
-        boolean currentQuest = false;
         ResultSet res = stmt.executeQuery();
         while (res.next()){
-            count++;
-            if (questId == res.getInt("uq_quest")){
-                currentQuest = true;
-            }
+            count = res.getInt(1);
         }
         res.close();
         stmt.close();
-
-        if (currentQuest)
-            return 1;
-        if (count == 0)
-            return 0;
-        return -1;
+        return count > 0;
     }
 
-    public int isUserInQuest(User user, int questId) throws SQLException {
+    public boolean isUserInQuest(User user) throws SQLException {
         if (user == null)
             throw new RuntimeException("User can't be null");
-        return isUserInQuest(user.getId(), questId);
+        return isUserInQuest(user.getId());
     }
+
+    public RunningQuest getRuningQuest(int userId, int questId) throws SQLException {
+        RunningQuest rq = null;
+        String sql = "select * from user_quest where uq_user=? and uq_quest=?";
+        PreparedStatement stmt = getConnection().prepareStatement(sql);
+        stmt.setInt(1,userId);
+        stmt.setInt(2,questId);
+        ResultSet res = stmt.executeQuery();
+        if (res.next()){
+            rq = new RunningQuest();
+            rq.setUserId(res.getInt("uq_user"));
+            rq.setQuestId(res.getInt("uq_quest"));
+            rq.setOrder(res.getInt("uq_order"));
+            rq.setStartTime(res.getTimestamp("uq_start_time").getTime());
+            rq.setEndTime(res.getTimestamp("uq_end_time").getTime());
+        }
+        res.close();
+        stmt.close();
+        return rq;
+    }
+
 }

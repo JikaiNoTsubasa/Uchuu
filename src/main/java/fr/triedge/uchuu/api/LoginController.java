@@ -5,22 +5,18 @@ import fr.triedge.uchuu.db.DB;
 import fr.triedge.uchuu.model.User;
 import fr.triedge.uchuu.utils.Utils;
 import fr.triedge.uchuu.utils.Vars;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.sql.SQLException;
 
-@Controller
+@RestController
 public class LoginController {
 
     @RequestMapping(path = Vars.VIEW_LOGIN, method = {RequestMethod.GET, RequestMethod.POST})

@@ -41,6 +41,7 @@ create table user_quest(
     uq_quest int,
     uq_order int,
     uq_start_time timestamp default CURRENT_TIMESTAMP,
+    uq_end_time timestamp default CURRENT_TIMESTAMP,
     primary key (uq_user, uq_quest),
     foreign key (uq_user) references user(user_id),
     foreign key (uq_quest) references quest(quest_id)

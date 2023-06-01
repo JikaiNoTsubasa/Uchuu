@@ -40,3 +40,20 @@ body{
     background: none;
     color: gray;
 }
+
+.u-button-finished{
+    text-decoration: none;
+    padding: 10px;
+    display: inline-block;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    border: 1px solid green;
+    background: none;
+    color: green;
+}
+
+.u-button-finished:hover{
+    cursor: pointer;
+    background: green;
+    color: #FFFFFF;
+}
