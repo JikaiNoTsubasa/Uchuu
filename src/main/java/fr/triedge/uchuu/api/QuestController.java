@@ -77,7 +77,7 @@ public class QuestController {
         }else{
             return new ModelAndView("quest.html").addObject("error", "Conditions non remplies pour démarrer la quête!");
         }
-        return new ModelAndView("redirect:quest");
+        return new ModelAndView("redirect:home");
     }
 
     private boolean conditionMet(Quest quest){

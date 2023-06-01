@@ -148,19 +148,19 @@ public class DB {
         stmt.setInt(1, userId);
         ResultSet res = stmt.executeQuery();
         int order = 0;
-        boolean isQuestalreadRunning = false;
+        boolean isQuestAlreadyRunning = false;
         Timestamp ts = new Timestamp(new java.util.Date().getTime());
         while (res.next()){
             order = res.getInt("uq_order") + 1;
             ts = res.getTimestamp("uq_end_time");
             int qId = res.getInt("uq_quest");
             if (questId == qId)
-                isQuestalreadRunning = true;
+                isQuestAlreadyRunning = true;
         }
         res.close();
         stmt.close();
 
-        if (isQuestalreadRunning)
+        if (isQuestAlreadyRunning)
             return false;
 
         String ins = "insert into user_quest(uq_user,uq_quest,uq_order,uq_end_time)values(?,?,?,?)";
@@ -169,8 +169,10 @@ public class DB {
         stmt.setInt(2, questId);
         stmt.setInt(3, order);
 
-        long mins = TimeUnit.MILLISECONDS.toMinutes(ts.getTime()) + quest.getDuration();
-        long millis = TimeUnit.MINUTES.toMillis(mins);
+        long currentMs = System.currentTimeMillis();
+        long mins = TimeUnit.MILLISECONDS.toMinutes(currentMs);
+        long minsAdd = mins + quest.getDuration();
+        long millis = TimeUnit.MINUTES.toMillis(minsAdd);
         stmt.setTimestamp(4, new Timestamp(millis));
 
         stmt.executeUpdate();

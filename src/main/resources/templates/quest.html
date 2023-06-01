@@ -2,7 +2,7 @@
 <html lang="en"  xmlns:th="http://www.w3.org/1999/html">
 <head>
     <title>Title</title>
-    <th:block th:include="fragments::meta"></th:block>
+    <th:block th:insert="~{fragments::meta}"></th:block>
 </head>
 <body>
     <a class="u-button" href="home">HOME</a>
@@ -25,7 +25,7 @@
         </table>
         <br><br>
         <a th:if="${finished}" th:href="@{${'questfinished?id='+quest.id}}" class="u-button-finished">Récupérer</a>
-        <a style="display:none;" th:href="@{${'questfinished?id='+quest.id}}" class="u-button-finished">Récupérer</a>
+        <a style="display:none;" th:href="@{${'questfinished?id='+quest.id}}" class="u-button-finished" id="finished">Récupérer</a>
         <a th:if="${noquest}" th:href="@{${'queststart?id='+quest.id}}" class="u-button">Lancer la quête</a>
         <span th:if="${anotherQuest}" class="u-button-disabled">Une autre quête est en cours</span>
         <span th:if="${currentQuest}" class="u-button-disabled" id="countdown"></span>
@@ -43,7 +43,7 @@
             var now = new Date().getTime();
 
             // Find the distance between now and the count down date
-            var distance = countDownDate - now;
+            var distance = endTime - now;
 
             // Time calculations for days, hours, minutes and seconds
             var days = Math.floor(distance / (1000 * 60 * 60 * 24));
@@ -57,6 +57,7 @@
             // If the count down is finished, write some text
             if (distance < 0) {
                 clearInterval(x);
+                $("#countdown").hide();
                 $("#finished").show();
             }
         }, 1000);
