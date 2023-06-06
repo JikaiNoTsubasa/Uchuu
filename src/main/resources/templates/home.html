@@ -7,9 +7,18 @@
 <body>
 <div th:insert="~{fragments::menu}"></div>
     <h1>Uchuu</h1>
+    <span th:if="${user}" th:text="@{${user.username + ' Level: ' +user.level}}"></span><br>
+    <div style="width: 100px; margin-left: 10px;">
+        <span class="u-progress tooltip">
+            <span th:style="@{${'width: '+percentXP+'%;display:block;height:100%'}}"></span>
+            <span class="tooltiptext" th:text="@{${currentXP + '/' +nextXP}}"></span>
+        </span>
+    </div>
+
+    <br><br>
     <div th:if="${quests != null}">
         <h2>Quêtes:</h2>
-        <a class="u-link" th:each="q:${quests}" th:href="@{${'quest?id=' + q.id}}" th:text="@{${'Niveau: ' + q.level + ' - ' + q.durationDisplay + ' - ' + q.name}}"></a>
+        <a class="u-link" style="display: block;" th:each="q:${quests}" th:href="@{${'quest?id=' + q.id}}" th:text="@{${'Niveau: ' + q.level + ' - ' + q.durationDisplay + ' - ' + q.name}}"></a>
     </div>
 </body>
 </html>

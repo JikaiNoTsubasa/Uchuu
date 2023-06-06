@@ -35,4 +35,5 @@ public class Model {
     public Quest getQuest(int id)  {
         return quests.stream().filter(q -> q.getId() == id).findFirst().orElse(null);
     }
+
 }

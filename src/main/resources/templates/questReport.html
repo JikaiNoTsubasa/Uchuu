@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"  xmlns:th="http://www.w3.org/1999/html">
 <head>
-    <title>Title</title>
+    <title>Uchuu - Rapport</title>
     <th:block th:insert="~{fragments::meta}"></th:block>
 </head>
 <body>
@@ -11,6 +11,7 @@
     </div>
     <div th:if="${report != null}" style="margin: 50px; border: 1px solid #222222; padding: 10px; display: block;">
         <h1>Rapport de quête:</h1>
+        XP: +<span th:text="${report.xp}"></span><br>
         <table>
             <tr th:each="row:${report.rows}">
                 <td><img th:src="${row.item.img}" style="vertical-align: middle;"/></td>

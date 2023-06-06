@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"  xmlns:th="http://www.w3.org/1999/html">
 <head>
-    <title>Title</title>
+    <title>Uchuu - Inventaire</title>
     <th:block th:insert="~{fragments::meta}"></th:block>
 </head>
 <body>
@@ -10,6 +10,7 @@
         <span style="color:red" th:text="${error}"></span>
     </div>
     <div th:if="${inventory != null}" style="margin: 50px; border: 1px solid #222222; padding: 10px; display: block;">
+        <h1>Inventaire</h1>
         <table>
             <tr th:each="row:${inventory.items}">
                 <td><img th:src="${row.item.img}" style="vertical-align: middle;"/></td>

@@ -74,7 +74,7 @@ public class QuestController extends AbstractController{
         }else{
             return new ModelAndView("quest.html").addObject("error", "Conditions non remplies pour démarrer la quête!");
         }
-        return new ModelAndView("redirect:home");
+        return new ModelAndView("redirect:quest?id="+id);
     }
 
     @RequestMapping(path = Vars.QUEST_FINISHED, method = {RequestMethod.GET})

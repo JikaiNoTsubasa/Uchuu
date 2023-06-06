@@ -254,6 +254,8 @@ public class DB {
             return null;
 
         QuestReport report = new QuestReport();
+        addXp(userId, quest.getXp());
+        report.setXp(quest.getXp());
         for (Drop d : quest.getDrops()){
             float chance = d.getChance();
             float rnd = Utils.getRandomNumber(0f, 100f);
@@ -271,6 +273,32 @@ public class DB {
 
         removeRunningQuest(userId, quest.getId());
         return report;
+    }
+
+    public void addXp(int userId, int xp) throws SQLException {
+        String sql = "select * from user where user_id=?";
+        PreparedStatement stmt = getConnection().prepareStatement(sql);
+        stmt.setInt(1, userId);
+        ResultSet res = stmt.executeQuery();
+        if (res.next()){
+            int uxp = res.getInt("user_xp");
+            int ulevel = res.getInt("user_level");
+            int nxp = Utils.getNextLevelXP(ulevel);
+            uxp += xp;
+            if (uxp >= nxp){
+                ulevel += 1;
+                uxp = uxp - nxp;
+            }
+            String sqlUp = "update user set user_level=?, user_xp=? where user_id=?";
+            stmt.close();
+            stmt = getConnection().prepareStatement(sqlUp);
+            stmt.setInt(1, ulevel);
+            stmt.setInt(2, uxp);
+            stmt.setInt(3, userId);
+            stmt.executeUpdate();
+        }
+        res.close();
+        stmt.close();
     }
 
     public void addToInventory(int userId, int itemId, int amount) throws SQLException {

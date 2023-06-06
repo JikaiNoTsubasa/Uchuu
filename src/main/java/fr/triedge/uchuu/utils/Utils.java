@@ -32,4 +32,16 @@ public class Utils {
         return (float) ((Math.random() * (max - min)) + min);
     }
 
+    public static int getNextLevelXP(int currentLevel){
+        int x = currentLevel + 1;
+        int a = 10;
+        int b = 0;
+        return (x*x) + (a*x) + b;
+    }
+
+    public static float getNextLevelPercent(int currentXP, int currentLevel){
+        int nextXP = getNextLevelXP(currentLevel);
+        return currentXP * 100 / nextXP;
+    }
+
 }

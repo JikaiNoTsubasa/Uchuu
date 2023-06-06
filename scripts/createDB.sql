@@ -59,12 +59,15 @@ create table inventory(
 insert into item(item_name, item_value, item_description, item_img)
 values
     ('Bois', 1.0, 'Un morceau de bois', 'includes/img/ico_item_wood.png'),
-    ('Pierre',1.0,'Un morceau de pierre');
+    ('Pierre',1.0,'Un morceau de pierre', null);
 
 insert into quest(quest_name, quest_description, quest_level, quest_duration_min, quest_xp)
 values
-    ('Couper du bois dans la forêt', 'Vous allez couper du bois en forêt', 0, '5', 5);
+    ('Couper du bois dans la forêt', 'Vous allez couper du bois en forêt', 0, '5', 5),
+    ('Ramasser du bois et des pierres', 'Vous allez ramasser du bois et des pierres en forêt', 1, '2', 6);
 
 insert into quest_drop(drop_item, drop_quest, drop_amount_min, drop_amount_max, drop_chance)
 values
-    ((select item_id from item where item_name='Bois'),(select quest_id from quest where quest_name='Couper du bois dans la forêt'),1,5,90);
+    ((select item_id from item where item_name='Bois'),(select quest_id from quest where quest_name='Couper du bois dans la forêt'),1,5,90),
+    ((select item_id from item where item_name='Bois'),(select quest_id from quest where quest_name='Ramasser du bois et des pierres'),1,3,80),
+    ((select item_id from item where item_name='Pierre'),(select quest_id from quest where quest_name='Ramasser du bois et des pierres'),2,5,80);
