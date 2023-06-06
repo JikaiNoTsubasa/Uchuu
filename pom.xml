@@ -83,5 +83,9 @@
         </dependency>
 
     </dependencies>
+
+    <build>
+        <finalName>uchuu</finalName>
+    </build>
     
 </project>

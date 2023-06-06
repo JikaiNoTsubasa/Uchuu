@@ -59,11 +59,11 @@ create table inventory(
 insert into item(item_name, item_value, item_description, item_img)
 values
     ('Bois', 1.0, 'Un morceau de bois', 'includes/img/ico_item_wood.png'),
-    ('Pierre',1.0,'Un morceau de pierre', null),
-    ('Charbon',1.2,'Un morceau de chabon', null),
-    ('Fer Brute',1.5,'Un morceau de fer brute', null),
-    ('Cuivre Brute',1.6,'Un morceau de cuivre brute', null),
-    ('Or Brute',2.0,'Un morceau d''or brute', null);
+    ('Pierre',1.0,'Un morceau de pierre'),
+    ('Charbon',1.2,'Un morceau de chabon'),
+    ('Fer Brute',1.5,'Un morceau de fer brute'),
+    ('Cuivre Brute',1.6,'Un morceau de cuivre brute'),
+    ('Or Brute',2.0,'Un morceau d''or brute');
 
 insert into quest(quest_name, quest_description, quest_level, quest_duration_min, quest_xp)
 values

@@ -19,40 +19,42 @@ public class QuestController extends AbstractController{
     public ModelAndView quest(@RequestParam(value = "id", required = false)Integer id){
         ModelAndView model = new ModelAndView("quest.html");
         User user = (User) getSession().getAttribute(Vars.USER);
-        if (Utils.isValid(id)){
-            Quest quest = Model.getInstance().getQuest(id);
-            if (quest != null){
-                if (conditionMet(quest)){
-                    model.addObject("quest", quest);
-                    try {
-                        boolean isInQuest = DB.getInstance().isUserInQuest(user);
-                        RunningQuest rQuest = DB.getInstance().getRuningQuest(user.getId(), quest.getId());
-                        if (rQuest != null){
-                            if (rQuest.isFinished()){
-                                model.addObject("finished", true);
+        try {
+            if (Utils.isValid(id)){
+                Quest quest = DB.getInstance().getQuest(id);//Model.getInstance().getQuest(id);
+                if (quest != null){
+                    if (conditionMet(quest)){
+                        model.addObject("quest", quest);
+
+                            boolean isInQuest = DB.getInstance().isUserInQuest(user);
+                            RunningQuest rQuest = DB.getInstance().getRunningQuest(user.getId(), quest.getId());
+                            if (rQuest != null){
+                                if (rQuest.isFinished()){
+                                    model.addObject("finished", true);
+                                }else{
+                                    // Current quest is running, display countdown
+                                    model.addObject("currentQuest", true);
+                                    model.addObject("endTime", rQuest.getEndTime());
+                                }
                             }else{
-                                // Current quest is running, display countdown
-                                model.addObject("currentQuest", true);
-                                model.addObject("endTime", rQuest.getEndTime());
+                                if (isInQuest){
+                                    model.addObject("anotherQuest", true);
+                                }else{
+                                    model.addObject("noquest", true);
+                                }
                             }
-                        }else{
-                            if (isInQuest){
-                                model.addObject("anotherQuest", true);
-                            }else{
-                                model.addObject("noquest", true);
-                            }
-                        }
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
+
+                    }else{
+                        model.addObject("error", "Votre niveau est insufisant.");
                     }
                 }else{
-                    model.addObject("error", "Votre niveau est insufisant.");
+                    model.addObject("error", "Quête non trouvée.");
                 }
             }else{
-                model.addObject("error", "Quête non trouvée.");
+                // No id provided
             }
-        }else{
-            // No id provided
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
 
         return model;
@@ -60,7 +62,12 @@ public class QuestController extends AbstractController{
 
     @RequestMapping(path = Vars.QUEST_START, method = {RequestMethod.GET})
     public ModelAndView startQuest(@RequestParam(value = "id")Integer id){
-        Quest quest = Model.getInstance().getQuest(id);
+        Quest quest = null;//Model.getInstance().getQuest(id);
+        try {
+            quest = DB.getInstance().getQuest(id);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         User user = (User) getSession().getAttribute(Vars.USER);
         if (Utils.isValid(id) && conditionMet(quest)){
             try {
@@ -82,9 +89,9 @@ public class QuestController extends AbstractController{
         ModelAndView model = new ModelAndView("questReport.html");
         if (Utils.isValid(id)){
             User user = (User)getSession().getAttribute(Vars.USER);
-            Quest quest = Model.getInstance().getQuest(id);
             try {
-                RunningQuest rQuest = DB.getInstance().getRuningQuest(user.getId(), quest.getId());
+                Quest quest = DB.getInstance().getQuest(id);//Model.getInstance().getQuest(id);
+                RunningQuest rQuest = DB.getInstance().getRunningQuest(user.getId(), quest.getId());
                 if (rQuest != null){
                     if (rQuest.isFinished()){
                         QuestReport report = DB.getInstance().validateQuest(user.getId(), quest);

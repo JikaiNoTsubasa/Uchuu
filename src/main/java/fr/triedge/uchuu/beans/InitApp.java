@@ -14,13 +14,17 @@ public class InitApp {
     @PostConstruct
     public void init(){
         System.out.println("Starting server...");
+        /*
         try {
             System.out.println("Loading in memory data...");
             Model.getInstance().reloadInMemoryData();
             System.out.println("Data loaded.");
             System.out.println("Current quests: "+Model.getInstance().getQuests().size());
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+         */
     }
 }
