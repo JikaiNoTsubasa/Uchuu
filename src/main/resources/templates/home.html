@@ -7,14 +7,24 @@
 <body>
 <div th:insert="~{fragments::menu}"></div>
     <h1>Uchuu</h1>
-    <span th:if="${user}" th:text="@{${user.username + ' Level: ' +user.level}}"></span><br>
-    <div style="width: 100px; margin-left: 10px;">
-        <span class="u-progress tooltip">
-            <span th:style="@{${'width: '+percentXP+'%;display:block;height:100%'}}"></span>
-            <span class="tooltiptext" th:text="@{${currentXP + '/' +nextXP}}"></span>
-        </span>
+    <div style="margin-left: 10px;">
+        <table class="t-user">
+            <tr>
+                <td style="width:0.1%;white-space: nowrap;">
+                    <span class="t-level" th:text="${user.level}"></span>
+                </td>
+                <td>
+                <span class="t-cell">
+                    <span class="t-name" th:text="${user.username}"></span>
+                    <span class="progress tooltip">
+                        <span th:style="@{${'width: '+percentXP+'%;display:block;height:100%'}}"></span>
+                        <span class="tooltiptext" th:text="@{${currentXP + '/' +nextXP}}"></span>
+                    </span>
+                </span>
+                </td>
+            </tr>
+        </table>
     </div>
-
     <br><br>
     <div th:if="${quests != null}">
         <h2>Quêtes:</h2>

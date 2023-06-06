@@ -59,15 +59,40 @@ create table inventory(
 insert into item(item_name, item_value, item_description, item_img)
 values
     ('Bois', 1.0, 'Un morceau de bois', 'includes/img/ico_item_wood.png'),
-    ('Pierre',1.0,'Un morceau de pierre', null);
+    ('Pierre',1.0,'Un morceau de pierre', null),
+    ('Charbon',1.2,'Un morceau de chabon', null),
+    ('Fer Brute',1.5,'Un morceau de fer brute', null),
+    ('Cuivre Brute',1.6,'Un morceau de cuivre brute', null),
+    ('Or Brute',2.0,'Un morceau d''or brute', null);
 
 insert into quest(quest_name, quest_description, quest_level, quest_duration_min, quest_xp)
 values
-    ('Couper du bois dans la forêt', 'Vous allez couper du bois en forêt', 0, '5', 5),
-    ('Ramasser du bois et des pierres', 'Vous allez ramasser du bois et des pierres en forêt', 1, '2', 6);
+    ('Couper du bois dans la forêt', 'Vous allez couper du bois en forêt', 0, 1, 5),
+    ('Ramasser du bois et des pierres', 'Vous allez ramasser du bois et des pierres en forêt', 1, 2, 6),
+    ('Mine Niveau I', 'Vous allez à la mine au premier sous sol', 2, 5, 10),
+    ('Mine Niveau II', 'Vous allez à la mine au deuxième sous sol', 3, 8, 15),
+    ('Mine Niveau III', 'Vous allez à la mine au troisième sous sol', 4, 12, 20);
 
 insert into quest_drop(drop_item, drop_quest, drop_amount_min, drop_amount_max, drop_chance)
 values
     ((select item_id from item where item_name='Bois'),(select quest_id from quest where quest_name='Couper du bois dans la forêt'),1,5,90),
+
     ((select item_id from item where item_name='Bois'),(select quest_id from quest where quest_name='Ramasser du bois et des pierres'),1,3,80),
-    ((select item_id from item where item_name='Pierre'),(select quest_id from quest where quest_name='Ramasser du bois et des pierres'),2,5,80);
+    ((select item_id from item where item_name='Pierre'),(select quest_id from quest where quest_name='Ramasser du bois et des pierres'),2,5,80),
+
+    ((select item_id from item where item_name='Pierre'),(select quest_id from quest where quest_name='Mine Niveau I'),5,10,80),
+    ((select item_id from item where item_name='Charbon'),(select quest_id from quest where quest_name='Mine Niveau I'),1,5,10),
+    ((select item_id from item where item_name='Fer Brute'),(select quest_id from quest where quest_name='Mine Niveau I'),1,3,1),
+    ((select item_id from item where item_name='Cuivre Brute'),(select quest_id from quest where quest_name='Mine Niveau I'),1,1,0.2),
+
+    ((select item_id from item where item_name='Pierre'),(select quest_id from quest where quest_name='Mine Niveau II'),10,20,80),
+    ((select item_id from item where item_name='Charbon'),(select quest_id from quest where quest_name='Mine Niveau II'),5,10,30),
+    ((select item_id from item where item_name='Fer Brute'),(select quest_id from quest where quest_name='Mine Niveau II'),2,6,5),
+    ((select item_id from item where item_name='Cuivre Brute'),(select quest_id from quest where quest_name='Mine Niveau II'),2,6,5),
+    ((select item_id from item where item_name='Or Brute'),(select quest_id from quest where quest_name='Mine Niveau II'),1,5,1),
+
+    ((select item_id from item where item_name='Pierre'),(select quest_id from quest where quest_name='Mine Niveau III'),15,20,80),
+    ((select item_id from item where item_name='Charbon'),(select quest_id from quest where quest_name='Mine Niveau III'),10,15,50),
+    ((select item_id from item where item_name='Fer Brute'),(select quest_id from quest where quest_name='Mine Niveau III'),8,12,30),
+    ((select item_id from item where item_name='Cuivre Brute'),(select quest_id from quest where quest_name='Mine Niveau III'),11,12,20),
+    ((select item_id from item where item_name='Or Brute'),(select quest_id from quest where quest_name='Mine Niveau III'),4,8,5);
