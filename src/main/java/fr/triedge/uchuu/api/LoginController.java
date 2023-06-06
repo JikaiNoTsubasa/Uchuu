@@ -5,19 +5,14 @@ import fr.triedge.uchuu.db.DB;
 import fr.triedge.uchuu.model.User;
 import fr.triedge.uchuu.utils.Utils;
 import fr.triedge.uchuu.utils.Vars;
+import jakarta.servlet.http.Cookie;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import java.sql.SQLException;
 
 @RestController
-public class LoginController {
+public class LoginController extends AbstractController{
 
     @RequestMapping(path = Vars.VIEW_LOGIN, method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView login(
@@ -30,7 +25,7 @@ public class LoginController {
             try {
                 User user = DB.getInstance().getUser(username, password);
                 if (user != null){
-                    getSession().setAttribute("user", user);
+                    getSession().setAttribute(Vars.USER, user);
                     createLoginCookie("UUser", new SPassword(username).getEncrypted());
                     return new ModelAndView("redirect:/home");
                 }else{
@@ -47,23 +42,9 @@ public class LoginController {
 
     @GetMapping(Vars.DISCONNECT)
     public ModelAndView disconnect(){
-        getSession().setAttribute("user", null);
+        getSession().setAttribute(Vars.USER, null);
         deleteLoginCookie("UUser");
         return new ModelAndView("redirect:/login");
-    }
-
-    public HttpSession getSession(){
-        return getHttpReq().getSession(true); // true == allow create
-    }
-
-    public HttpServletRequest getHttpReq(){
-        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-        return attr.getRequest();
-    }
-
-    public HttpServletResponse getHttpRep(){
-        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-        return attr.getResponse();
     }
 
     public void createLoginCookie(String name, String value){

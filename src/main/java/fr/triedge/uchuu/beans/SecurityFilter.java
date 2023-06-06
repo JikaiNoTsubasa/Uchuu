@@ -3,6 +3,7 @@ package fr.triedge.uchuu.beans;
 import com.idorsia.research.sbilib.utils.SPassword;
 import fr.triedge.uchuu.db.DB;
 import fr.triedge.uchuu.model.User;
+import fr.triedge.uchuu.utils.Vars;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -30,7 +31,7 @@ public class SecurityFilter implements Filter {
         }
 
         HttpSession session = req.getSession(true);
-        User user = (User)session.getAttribute("user");
+        User user = (User)session.getAttribute(Vars.USER);
 
         if (user == null){
             Cookie cookie = getCookie(req.getCookies(), "UUser");
@@ -40,7 +41,7 @@ public class SecurityFilter implements Filter {
                 try {
                     u = DB.getInstance().getUser(pwd.getDecrypted());
                     if (u != null){
-                        session.setAttribute("user", u);
+                        session.setAttribute(Vars.USER, u);
                         res.sendRedirect("home");
                         return;
                     }else{

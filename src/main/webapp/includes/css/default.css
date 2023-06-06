@@ -78,3 +78,12 @@ body{
     background: green;
     color: #FFFFFF;
 }
+
+.u-link{
+    text-decoration: none;
+    color: #222222;
+}
+
+.u-link:hover{
+    color: gray;
+}

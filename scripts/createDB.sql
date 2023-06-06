@@ -56,9 +56,10 @@ create table inventory(
     foreign key (inv_item) references item(item_id)
 )ENGINE=InnoDB;
 
-insert into item(item_name, item_value, item_description)
+insert into item(item_name, item_value, item_description, item_img)
 values
-    ('Bois', 1.0, 'Un morceau de bois');
+    ('Bois', 1.0, 'Un morceau de bois', 'includes/img/ico_item_wood.png'),
+    ('Pierre',1.0,'Un morceau de pierre');
 
 insert into quest(quest_name, quest_description, quest_level, quest_duration_min, quest_xp)
 values

@@ -5,11 +5,11 @@
     <th:block th:insert="~{fragments::meta}"></th:block>
 </head>
 <body>
-<a href="disconnect">Disconnect</a>
+<div th:insert="~{fragments::menu}"></div>
     <h1>Uchuu</h1>
     <div th:if="${quests != null}">
         <h2>Quêtes:</h2>
-        <a th:each="q:${quests}" th:href="@{${'quest?id=' + q.id}}" th:text="@{${'Niveau: ' + q.level + ' - ' + q.durationDisplay + ' - ' + q.name}}"></a>
+        <a class="u-link" th:each="q:${quests}" th:href="@{${'quest?id=' + q.id}}" th:text="@{${'Niveau: ' + q.level + ' - ' + q.durationDisplay + ' - ' + q.name}}"></a>
     </div>
 </body>
 </html>

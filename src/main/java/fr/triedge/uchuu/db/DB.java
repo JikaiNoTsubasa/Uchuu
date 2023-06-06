@@ -140,6 +140,25 @@ public class DB {
         return drops;
     }
 
+    public Item getItem(int id) throws SQLException {
+        String sql = "select * from item where item_id=?";
+        PreparedStatement stmt = getConnection().prepareStatement(sql);
+        stmt.setInt(1, id);
+        ResultSet res = stmt.executeQuery();
+        Item i = null;
+        while (res.next()){
+            i = new Item();
+            i.setId(res.getInt("item_id"));
+            i.setName(res.getString("item_name"));
+            i.setValue(res.getFloat("item_value"));
+            i.setDescription(res.getString("item_description"));
+            i.setImg(res.getString("item_img"));
+        }
+        res.close();
+        stmt.close();
+        return i;
+    }
+
     public boolean startQuestForUser(int userId, int questId) throws SQLException {
         Quest quest = Model.getInstance().getQuest(questId);
         if (quest == null)
@@ -164,17 +183,16 @@ public class DB {
         if (isQuestAlreadyRunning)
             return false;
 
-        String ins = "insert into user_quest(uq_user,uq_quest,uq_order,uq_end_time)values(?,?,?,?)";
+        String ins = "insert into user_quest(uq_user,uq_quest,uq_order, uq_start_time, uq_end_time)values(?,?,?,?,?)";
         stmt = getConnection().prepareStatement(ins);
         stmt.setInt(1, userId);
         stmt.setInt(2, questId);
         stmt.setInt(3, order);
 
-        long currentMs = System.currentTimeMillis();
-        long mins = TimeUnit.MILLISECONDS.toMinutes(currentMs);
-        long minsAdd = mins + quest.getDuration();
-        long millis = TimeUnit.MINUTES.toMillis(minsAdd);
-        stmt.setTimestamp(4, new Timestamp(millis));
+        long currentMillis = System.currentTimeMillis();
+        long millis = currentMillis + (quest.getDuration() * 1000*60);
+        stmt.setTimestamp(4, new Timestamp(currentMillis));
+        stmt.setTimestamp(5, new Timestamp(millis));
 
         stmt.executeUpdate();
         stmt.close();
@@ -293,4 +311,21 @@ public class DB {
         }
     }
 
+    public Inventory getInventory(User user) throws SQLException {
+        Inventory inv = new Inventory();
+        String sql = "select * from inventory where inv_user=?";
+        PreparedStatement stmt = getConnection().prepareStatement(sql);
+        stmt.setInt(1, user.getId());
+        ResultSet res = stmt.executeQuery();
+        while (res.next()){
+            InventoryRow i = new InventoryRow();
+            Item item = getItem(res.getInt("inv_item"));
+            i.setItem(item);
+            i.setAmount(res.getInt("inv_amount"));
+            inv.getItems().add(i);
+        }
+        res.close();
+        stmt.close();
+        return inv;
+    }
 }

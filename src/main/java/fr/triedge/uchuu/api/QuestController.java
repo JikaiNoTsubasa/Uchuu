@@ -8,21 +8,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import java.sql.SQLException;
 
 @RestController
-public class QuestController {
+public class QuestController extends AbstractController{
 
     @RequestMapping(path = Vars.VIEW_QUEST, method = {RequestMethod.GET})
     public ModelAndView quest(@RequestParam(value = "id", required = false)Integer id){
         ModelAndView model = new ModelAndView("quest.html");
-        User user = (User) getSession().getAttribute("user");
+        User user = (User) getSession().getAttribute(Vars.USER);
         if (Utils.isValid(id)){
             Quest quest = Model.getInstance().getQuest(id);
             if (quest != null){
@@ -65,7 +61,7 @@ public class QuestController {
     @RequestMapping(path = Vars.QUEST_START, method = {RequestMethod.GET})
     public ModelAndView startQuest(@RequestParam(value = "id")Integer id){
         Quest quest = Model.getInstance().getQuest(id);
-        User user = (User) getSession().getAttribute("user");
+        User user = (User) getSession().getAttribute(Vars.USER);
         if (Utils.isValid(id) && conditionMet(quest)){
             try {
                 boolean started = DB.getInstance().startQuestForUser(user.getId(), id);
@@ -85,7 +81,7 @@ public class QuestController {
     public ModelAndView questFinished(@RequestParam(value = "id")Integer id){
         ModelAndView model = new ModelAndView("questReport.html");
         if (Utils.isValid(id)){
-            User user = (User)getSession().getAttribute("user");
+            User user = (User)getSession().getAttribute(Vars.USER);
             Quest quest = Model.getInstance().getQuest(id);
             try {
                 RunningQuest rQuest = DB.getInstance().getRuningQuest(user.getId(), quest.getId());
@@ -113,7 +109,7 @@ public class QuestController {
     private boolean conditionMet(Quest quest){
         if (quest == null)
             return false;
-        User user = (User) getSession().getAttribute("user");
+        User user = (User) getSession().getAttribute(Vars.USER);
         try {
             User u = DB.getInstance().getUser(user.getUsername());
             if (u.getLevel() >= quest.getLevel())
@@ -125,12 +121,4 @@ public class QuestController {
         return false;
     }
 
-    public HttpSession getSession(){
-        return getHttpReq().getSession(true); // true == allow create
-    }
-
-    public HttpServletRequest getHttpReq(){
-        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-        return attr.getRequest();
-    }
 }
