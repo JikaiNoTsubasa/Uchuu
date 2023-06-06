@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.w3.org/1999/html">
+<head>
+    <title>Title</title>
+    <th:block th:insert="~{fragments::meta}"></th:block>
+</head>
+<body>
+    <a class="u-button" href="home">HOME</a>
+    <div th:if="${error}">
+        <span style="color:red" th:text="${error}"></span>
+    </div>
+    <div th:if="${report != null}" style="margin: 50px; border: 1px solid #222222; padding: 10px; display: block;">
+        <h1>Rapport de quête:</h1>
+        <table>
+            <tr th:each="row:${report.rows}">
+                <td><img th:src="${row.item.img}" style="vertical-align: middle;"/></td>
+                <td th:text="${row.item.name}"></td>
+                <td th:text="${row.amount}"></td>
+            </tr>
+        </table>
+    </div>
+    <br><br>
+    <a th:href="home" class="u-button">Retour</a>
+</body>
+</html>

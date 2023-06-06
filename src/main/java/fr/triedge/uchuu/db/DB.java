@@ -231,10 +231,11 @@ public class DB {
         stmt.close();
     }
 
-    public void validateQuest(int userId, Quest quest) throws SQLException {
+    public QuestReport validateQuest(int userId, Quest quest) throws SQLException {
         if (quest == null)
-            return;
+            return null;
 
+        QuestReport report = new QuestReport();
         for (Drop d : quest.getDrops()){
             float chance = d.getChance();
             float rnd = Utils.getRandomNumber(0f, 100f);
@@ -243,11 +244,15 @@ public class DB {
                 int amount = Utils.getRandomNumber(d.getMin(), d.getMax());
                 if (amount > 0){
                     addToInventory(userId, d.getItem().getId(), amount);
+                    report.add(d.getItem(), amount);
+                }else{
+                    report.add(d.getItem(), 0);
                 }
             }
         }
 
         removeRunningQuest(userId, quest.getId());
+        return report;
     }
 
     public void addToInventory(int userId, int itemId, int amount) throws SQLException {

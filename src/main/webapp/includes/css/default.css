@@ -13,6 +13,27 @@ body{
     width: 100%;
 }
 
+.u-menu{
+
+}
+
+.u-menu a{
+    text-decoration: none;
+    padding: 10px;
+    display: inline-block;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #222222;
+    background: none;
+    color: #222222;
+}
+
+.u-menu a:hover{
+    cursor: pointer;
+    background: #222222;
+    color: #FFFFFF;
+}
+
 .u-button{
     text-decoration: none;
     padding: 10px;
