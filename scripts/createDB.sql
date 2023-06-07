@@ -163,7 +163,8 @@ values
     (3,'Mine Niveau I', 'Vous allez à la mine au premier sous sol.', 2, 5, 10, true, null),
     (4,'Mine Niveau II', 'Vous allez à la mine au deuxième sous sol.', 3, 8, 40, true, null),
     (5,'Mine Niveau III', 'Vous allez à la mine au troisième sous sol.', 4, 12, 50, true, null),
-    (6,'Apprentissage: Maison', 'Vous apprennez a construire une maison. Une fois cette quête réalisé, vous pourrez construire des maisons.', 5, 30, 100, false, 1);
+    (6,'Apprentissage: Maison', 'Vous apprennez a construire une maison. Une fois cette quête réalisé, vous pourrez construire des maisons.', 5, 30, 100, false, 1),
+    (7,'Apprentissage: Scierie', 'Vous apprennez a construire une scierie. Une fois cette quête réalisé, vous pourrez construire une scierie. C''est un batiment de production, vous pourrez recevoir du bois a interval régulier.', 10, 60, 200, false, 2);
 
 insert into quest_drop(drop_item, drop_quest, drop_amount_min, drop_amount_max, drop_chance)
 values

@@ -14,6 +14,7 @@
 
     <div style="margin:20px;">
         <h1>Admin</h1>
+        <h3>Users</h3>
         <div th:if="${users != null}">
             <table>
                 <thead>
@@ -46,6 +47,23 @@
                 </tbody>
             </table>
             <span id="ajaxresult"></span>
+        </div>
+
+        <h3>Buildings</h3>
+        <div th:if="${buildings!=null}">
+            <div th:each="b:${buildings}" style="padding:5px 10px;border: 1px solid #222222; margin-bottom: 10px; display: block;">
+                <span style="font-weight: bold" th:text="${b.name}"></span><br>
+                <div th:each="bl:${b.levels}" style="display: inline-block; margin-right:10px; margin-bottom: 10px;border: 1px dashed #222222; padding: 5px;">
+                    <span th:text="@{${'Level '+bl.level}}"></span>
+                    <table>
+                        <tr th:each="ri:${bl.recipe.recipeItems}">
+                            <td><img th:src="${ri.item.img}" style="vertical-align: middle;"/></td>
+                            <td th:text="${ri.item.name}"></td>
+                            <td th:text="${ri.amount}"></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
