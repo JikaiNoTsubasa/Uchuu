@@ -102,6 +102,7 @@ create table user_building(
     ub_user int,
     ub_building int,
     ub_level int default 0,
+    ub_started boolean default false,
     foreign key (ub_user) references user(user_id),
     foreign key (ub_building) references building(building_id)
 )ENGINE=InnoDB;

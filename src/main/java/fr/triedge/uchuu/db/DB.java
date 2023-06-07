@@ -471,6 +471,7 @@ public class DB {
         while (res.next()){
             UserBuilding ub = new UserBuilding();
             ub.setLevel(res.getInt("ub_level"));
+            ub.setStarted(res.getBoolean("ub_started"));
             ub.setBuilding(getBuilding(res.getInt("ub_building")));
             bs.add(ub);
         }

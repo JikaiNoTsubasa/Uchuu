@@ -15,6 +15,10 @@
             <img th:src="${b.building.img}" width="50px" height="50px" style="margin: 10px 0px;"/><br>
             <span th:text="${b.building.name}"></span>
             <span class="b-level" th:text="${b.level}"></span>
+            <span class="b-started">
+                <span th:if="${b.started==true}">On</span>
+                <span th:if="${b.started==false}">Off</span>
+            </span>
             <a th:href="@{${'bview?id='+b.building.id}}" class="b-link">&#x2934;</a>
         </div>
     </div>

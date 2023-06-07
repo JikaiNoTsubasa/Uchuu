@@ -45,7 +45,10 @@
                             </div>
                         </td>
                         <td>
-                            <span th:each="b:${u.buildings}" style="display: block;" th:text="@{${'['+b.level+'] '+b.building.name}}"></span>
+                            <span th:each="b:${u.buildings}" style="display: block;">
+                                <span th:if="${b.started==true}" th:text="@{${'['+b.level+'][On ]'+b.building.name}}"></span>
+                                <span th:if="${b.started==false}" th:text="@{${'['+b.level+'][Off]'+b.building.name}}"></span>
+                            </span>
                         </td>
                     </tr>
                 </tbody>
