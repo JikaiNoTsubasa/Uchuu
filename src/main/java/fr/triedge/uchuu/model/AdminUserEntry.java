@@ -1,5 +1,7 @@
 package fr.triedge.uchuu.model;
 
+import java.util.ArrayList;
+
 public class AdminUserEntry {
 
     private User user;
@@ -7,6 +9,15 @@ public class AdminUserEntry {
     private RunningQuest runningQuest;
     private int nextLevelXP;
     private float nextLevelPercent;
+    private ArrayList<UserBuilding> buildings = new ArrayList<>();
+
+    public ArrayList<UserBuilding> getBuildings() {
+        return buildings;
+    }
+
+    public void setBuildings(ArrayList<UserBuilding> buildings) {
+        this.buildings = buildings;
+    }
 
     public RunningQuest getRunningQuest() {
         return runningQuest;

@@ -16,7 +16,7 @@
         <h1>Admin</h1>
         <h3>Users</h3>
         <div th:if="${users != null}">
-            <table>
+            <table style="border-collapse: collapse;">
                 <thead>
                     <tr>
                         <th>Nom</th>
@@ -25,23 +25,27 @@
                         <th>NextLevelPercent</th>
                         <th>Quête</th>
                         <th>Actions</th>
+                        <th>Buildings</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="u:${users}">
+                    <tr th:each="u:${users}" style="border-top: 1px solid #222222;">
                         <td><span th:text="${u.user.username}"></span></td>
                         <td><span th:text="${u.user.level}"></span></td>
                         <td><span th:text="@{${u.user.xp + '/' + u.nextLevelXP}}"></span></td>
                         <td><span th:text="@{${u.nextLevelPercent + '%'}}"></span></td>
                         <td>
                             <div th:if="${u.currentQuest != null}">
-                                <span th:text="@{${'['+#numbers.formatDecimal(u.runningQuest.percentage, 0, 'COMMA', 2, 'POINT')+'%] '+u.currentQuest.name}}" style="margin-right: 10px;"></span>
+                                <a class="u-link" th:href="@{${'quest?id='+u.currentQuest.id}}" th:text="@{${'['+#numbers.formatDecimal(u.runningQuest.percentage, 0, 'COMMA', 2, 'POINT')+'%] '+u.currentQuest.name}}" style="margin-right: 10px;"></a>
                             </div>
                         </td>
                         <td>
                             <div th:if="${u.currentQuest != null}">
                                 <span class="u-link" th:onclick="@{${'finishQuest('+u.user.id+','+u.currentQuest.id+');'}}">Finish</span>
                             </div>
+                        </td>
+                        <td>
+                            <span th:each="b:${u.buildings}" style="display: block;" th:text="@{${'['+b.level+'] '+b.building.name}}"></span>
                         </td>
                     </tr>
                 </tbody>

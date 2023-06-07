@@ -27,7 +27,7 @@
         </div>
         <div th:if="${quest.plan != null}">
             <h3>Plan: <span th:text="${quest.plan.building.name}"></span></h3>
-            <div style="margin-top: 30px; font-size: 10px; margin-left: 30px;">
+            <div th:if="${#lists.size(quest.plan.building.levels)>0}" style="margin-top: 30px; font-size: 10px; margin-left: 30px;">
                 <span style="font-weight: bold;">Materiaux de construction:</span>
                 <table>
                     <tr th:each="d:${quest.plan.building.levels[0].recipe.recipeItems}">

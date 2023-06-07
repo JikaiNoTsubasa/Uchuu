@@ -564,6 +564,9 @@ public class DB {
             }
             a.setNextLevelXP(Utils.getNextLevelXP(u.getLevel()));
             a.setNextLevelPercent(Utils.getNextLevelPercent(u.getXp(), u.getLevel()));
+
+            a.setBuildings(getUserAvailableBuildings(u));
+
             users.add(a);
         }
         res.close();
