@@ -2,6 +2,7 @@ package fr.triedge.uchuu.api;
 
 import fr.triedge.uchuu.db.DB;
 import fr.triedge.uchuu.model.AdminUserEntry;
+import fr.triedge.uchuu.model.Building;
 import fr.triedge.uchuu.model.User;
 import fr.triedge.uchuu.utils.Vars;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,9 @@ public class AdminController extends AbstractController{
         try{
             ArrayList<AdminUserEntry> users = DB.getInstance().adminGetUsers();
             model.addObject("users", users);
+
+            ArrayList<Building> buildings = DB.getInstance().getBuildings();
+            model.addObject("buildings", buildings);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

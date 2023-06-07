@@ -19,6 +19,7 @@ create table item(
 
 create table building(
     building_id INT AUTO_INCREMENT PRIMARY KEY,
+    building_img varchar(255) default 'includes/img/ico_item_unknown.png',
     building_name varchar(255) not null
 )ENGINE=InnoDB;
 
@@ -104,7 +105,14 @@ create table user_building(
     foreign key (ub_building) references building(building_id)
 )ENGINE=InnoDB;
 
-insert into building(building_id, building_name) VALUES (1, 'Maison');
+insert into building(building_id, building_name)
+VALUES
+    (1, 'Maison'),
+    (2, 'Scierie'),
+    (3, 'Mine de Pierre'),
+    (4, 'Mine de Fer'),
+    (5, 'Mine de Cuivre'),
+    (6, 'Mine d''or');
 
 insert into item(item_id, item_name, item_value, item_description, item_img)
 values
@@ -117,16 +125,36 @@ values
 
 insert into recipe(recipe_id, recipe_name)
 VALUES
-    (1,'Recette Maison lvl 0');
+    (1,'Recette Maison lvl 1'),
+    (2,'Recette Maison lvl 2'),
+    (3,'Recette Maison lvl 3'),
+    (4,'Recette Maison lvl 4'),
+    (5,'Recette Maison lvl 5');
 
 insert into recipe_item(ri_id, ri_recipe, ri_amount, ri_item)
 VALUES
     (1,1,50,1),
-    (2,1,50,2);
+    (2,1,50,2),
+
+    (3,2,100,1),
+    (4,2,100,2),
+
+    (5,3,200,1),
+    (6,3,200,2),
+
+    (7,4,300,1),
+    (8,4,300,2),
+
+    (9,5,500,1),
+    (10,5,500,2);
 
 insert into building_level(bl_building, bl_level, bl_recipe)
 values
-    (1,0,1);
+    (1,1,1),
+    (1,2,2),
+    (1,3,3),
+    (1,4,4),
+    (1,5,5);
 
 insert into quest(quest_id, quest_name, quest_description, quest_level, quest_duration_min, quest_xp, quest_repeatable, quest_plan)
 values

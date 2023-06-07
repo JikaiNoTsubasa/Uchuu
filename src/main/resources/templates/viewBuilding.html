@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.w3.org/1999/html">
+<head>
+    <title>Uchuu - Building</title>
+    <th:block th:insert="~{fragments::meta}"></th:block>
+</head>
+<body>
+    <a class="u-button" href="building">Retour</a>
+    <div th:if="${error}">
+        <span style="color:red" th:text="${error}"></span>
+    </div>
+
+    <div th:if="${building != null}" style="margin: 20px;">
+        <h1><span th:text="${building.building.name}"></span></h1>
+        Niveau: <span th:text="${building.level}"></span><br>
+        <br><br>
+        <div th:if="${building.nextLevel != null}">
+            <span style="font-weight: bold">Construction:</span>
+            <table>
+                <tr th:each="ri:${building.nextLevel.recipe.recipeItems}">
+                    <td><img th:src="${ri.item.img}" style="vertical-align: middle;"/></td>
+                    <td th:text="${ri.item.name}"></td>
+                    <td th:text="${ri.amount}"></td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+
+</body>
+</html>

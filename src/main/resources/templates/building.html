@@ -10,5 +10,14 @@
         <span style="color:red" th:text="${error}"></span>
     </div>
 
+    <div th:if="${buildings != null}" style="margin: 20px;">
+        <div th:each="b:${buildings}" class="b-card">
+            <img th:src="${b.building.img}" width="50px" height="50px" style="margin: 10px 0px;"/><br>
+            <span th:text="${b.building.name}"></span>
+            <span class="b-level" th:text="${b.level}"></span>
+            <a th:href="@{${'bview?id='+b.building.id}}" class="b-link">&#x2934;</a>
+        </div>
+    </div>
+
 </body>
 </html>

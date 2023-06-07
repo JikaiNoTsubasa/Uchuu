@@ -462,15 +462,17 @@ public class DB {
         return inv;
     }
 
-    public ArrayList<Building> getUserAvailableBuildings(User user) throws SQLException {
-        ArrayList<Building> bs = new ArrayList<>();
+    public ArrayList<UserBuilding> getUserAvailableBuildings(User user) throws SQLException {
+        ArrayList<UserBuilding> bs = new ArrayList<>();
         String sql = "select * from user_building where ub_user=?";
         PreparedStatement stmt = getConnection().prepareStatement(sql);
         stmt.setInt(1, user.getId());
         ResultSet res = stmt.executeQuery();
         while (res.next()){
-            Building b = getBuilding(res.getInt("ub_building"), user);
-            bs.add(b);
+            UserBuilding ub = new UserBuilding();
+            ub.setLevel(res.getInt("ub_level"));
+            ub.setBuilding(getBuilding(res.getInt("ub_building")));
+            bs.add(ub);
         }
         res.close();
         stmt.close();
@@ -487,6 +489,7 @@ public class DB {
             b = new Building();
             b.setName(res.getString("building_name"));
             b.setId(res.getInt("building_id"));
+            b.setImg(res.getString("building_img"));
             b.setLevels(getBuildingLevel(b.getId()));
         }
         res.close();
@@ -494,22 +497,17 @@ public class DB {
         return b;
     }
 
-    public Building getBuilding(int buildingId, User user) throws SQLException {
-        Building b = null;
-        String sql = "select * from user_building left join building on building_id=ub_building where building_id=? and ub_user=?";
+    public ArrayList<Building> getBuildings() throws SQLException {
+        ArrayList<Building> bs = new ArrayList<>();
+        String sql = "select * from building";
         PreparedStatement stmt = getConnection().prepareStatement(sql);
-        stmt.setInt(1, buildingId);
-        stmt.setInt(2, user.getId());
         ResultSet res = stmt.executeQuery();
         while (res.next()){
-            b = new Building();
-            b.setName(res.getString("building_name"));
-            b.setId(res.getInt("building_id"));
-            b.setLevels(getBuildingLevel(b.getId()));
+            bs.add(getBuilding(res.getInt("building_id")));
         }
         res.close();
         stmt.close();
-        return b;
+        return bs;
     }
 
     public ArrayList<BuildingLevel> getBuildingLevel(int buildingId) throws SQLException {
