@@ -7,14 +7,14 @@ public class Building {
     private int id;
     private String name;
 
-    private ArrayList<BuildingRecipeItem> recipeItems = new ArrayList<>();
+    private ArrayList<BuildingLevel> levels = new ArrayList<>();
 
-    public ArrayList<BuildingRecipeItem> getRecipeItems() {
-        return recipeItems;
+    public ArrayList<BuildingLevel> getLevels() {
+        return levels;
     }
 
-    public void setRecipeItems(ArrayList<BuildingRecipeItem> recipeItems) {
-        this.recipeItems = recipeItems;
+    public void setLevels(ArrayList<BuildingLevel> levels) {
+        this.levels = levels;
     }
 
     public int getId() {

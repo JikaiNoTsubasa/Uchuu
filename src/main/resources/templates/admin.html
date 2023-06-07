@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.w3.org/1999/html">
+<head>
+    <title>Uchuu - Building</title>
+    <th:block th:insert="~{fragments::meta}"></th:block>
+</head>
+<body>
+    <div th:insert="~{fragments::menu}"></div>
+
+    <a class="u-button" href="home">HOME</a>
+    <div th:if="${error}">
+        <span style="color:red" th:text="${error}"></span>
+    </div>
+
+    <div style="margin:20px;">
+        <h1>Admin</h1>
+        <div th:if="${users != null}">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Niveau</th>
+                        <th>XP</th>
+                        <th>NextLevelPercent</th>
+                        <th>Quête</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="u:${users}">
+                        <td><span th:text="${u.user.username}"></span></td>
+                        <td><span th:text="${u.user.level}"></span></td>
+                        <td><span th:text="@{${u.user.xp + '/' + u.nextLevelXP}}"></span></td>
+                        <td><span th:text="@{${u.nextLevelPercent + '%'}}"></span></td>
+                        <td>
+                            <div th:if="${u.currentQuest != null}">
+                                <span th:text="@{${'['+u.runningQuest.percentage+'%] '+u.currentQuest.name}}" style="margin-right: 10px;"></span>
+                            </div>
+                        </td>
+                        <td>
+                            <div th:if="${u.currentQuest != null}">
+                                <span class="u-link" th:onclick="@{${'finishQuest('+u.user.id+','+u.currentQuest.id+');'}}">Finish</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <span id="ajaxresult"></span>
+        </div>
+    </div>
+
+
+<script>
+    function finishQuest(uid,qid){
+        $.ajax({
+            url: 'adminFinishQuest',
+            method: 'get',
+            data: {
+                userid: uid,
+                questid: qid
+            },
+            success: function(response){
+                $("#ajaxresult").html(response);
+            },
+            error: function(xhr, status){
+                console.log("["+status+"]: "+xhr.responseText);
+                $("#ajaxresult").html("["+status+"]: "+xhr.responseText);
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

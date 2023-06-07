@@ -3,6 +3,7 @@ package fr.triedge.uchuu.db;
 import com.idorsia.research.sbilib.utils.SPassword;
 import fr.triedge.uchuu.model.*;
 import fr.triedge.uchuu.utils.Utils;
+import jdk.jshell.execution.Util;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -88,6 +89,7 @@ public class DB {
         user.setUsername(res.getString("user_name"));
         user.setLevel(res.getInt("user_level"));
         user.setXp(res.getInt("user_xp"));
+        user.setAdmin(res.getBoolean("user_admin"));
         return user;
     }
 
@@ -153,32 +155,23 @@ public class DB {
 
     public Plan getPlan(int planId) throws SQLException {
         Plan p = null;
-        String sql = "select * from building where building_id=?";
-        PreparedStatement stmt = getConnection().prepareStatement(sql);
-        stmt.setInt(1, planId);
-        ResultSet res = stmt.executeQuery();
-        if (res.next()){
+        Building b = getBuilding(planId);
+        if (b != null){
             p = new Plan();
-            Building b = new Building();
-            b.setId(res.getInt("building_id"));
-            b.setName(res.getString("building_name"));
-            b.setRecipeItems(getRecipeForBuilding(b.getId()));
             p.setBuilding(b);
         }
         return p;
     }
 
-    public ArrayList<BuildingRecipeItem> getRecipeForBuilding(int buildingId) throws SQLException {
-        ArrayList<BuildingRecipeItem> list = new ArrayList<>();
-        String sql = "select * from building_recipe where recipe_building=?";
+    public ArrayList<Recipe> getRecipeForBuilding(int buildingId, int level) throws SQLException {
+        ArrayList<Recipe> list = new ArrayList<>();
+        String sql = "select * from building_level where bl_building=? and bl_level=?";
         PreparedStatement stmt = getConnection().prepareStatement(sql);
         stmt.setInt(1, buildingId);
+        stmt.setInt(2, level);
         ResultSet res = stmt.executeQuery();
         while(res.next()){
-            BuildingRecipeItem r = new BuildingRecipeItem();
-            r.setItem(getItem(res.getInt("recipe_item")));
-            r.setAmount(res.getInt("recipe_amount"));
-            list.add(r);
+            list.add(getRecipe(res.getInt("bl_recipe")));
         }
         return list;
     }
@@ -379,7 +372,7 @@ public class DB {
     }
 
     public void addPlanToUser(int userId, int buildingId) throws SQLException {
-        String sql = "insert into user_plan(up_user,up_building)values(?,?)";
+        String sql = "insert into user_building(ub_user,ub_building)values(?,?)";
         PreparedStatement stmt = getConnection().prepareStatement(sql);
         stmt.setInt(1, userId);
         stmt.setInt(2, buildingId);
@@ -467,5 +460,125 @@ public class DB {
         res.close();
         stmt.close();
         return inv;
+    }
+
+    public ArrayList<Building> getUserAvailableBuildings(User user) throws SQLException {
+        ArrayList<Building> bs = new ArrayList<>();
+        String sql = "select * from user_building where ub_user=?";
+        PreparedStatement stmt = getConnection().prepareStatement(sql);
+        stmt.setInt(1, user.getId());
+        ResultSet res = stmt.executeQuery();
+        while (res.next()){
+            Building b = getBuilding(res.getInt("ub_building"), user);
+            bs.add(b);
+        }
+        res.close();
+        stmt.close();
+        return bs;
+    }
+
+    public Building getBuilding(int buildingId) throws SQLException {
+        Building b = null;
+        String sql = "select * from building where building_id=?";
+        PreparedStatement stmt = getConnection().prepareStatement(sql);
+        stmt.setInt(1, buildingId);
+        ResultSet res = stmt.executeQuery();
+        while (res.next()){
+            b = new Building();
+            b.setName(res.getString("building_name"));
+            b.setId(res.getInt("building_id"));
+            b.setLevels(getBuildingLevel(b.getId()));
+        }
+        res.close();
+        stmt.close();
+        return b;
+    }
+
+    public Building getBuilding(int buildingId, User user) throws SQLException {
+        Building b = null;
+        String sql = "select * from user_building left join building on building_id=ub_building where building_id=? and ub_user=?";
+        PreparedStatement stmt = getConnection().prepareStatement(sql);
+        stmt.setInt(1, buildingId);
+        stmt.setInt(2, user.getId());
+        ResultSet res = stmt.executeQuery();
+        while (res.next()){
+            b = new Building();
+            b.setName(res.getString("building_name"));
+            b.setId(res.getInt("building_id"));
+            b.setLevels(getBuildingLevel(b.getId()));
+        }
+        res.close();
+        stmt.close();
+        return b;
+    }
+
+    public ArrayList<BuildingLevel> getBuildingLevel(int buildingId) throws SQLException {
+        ArrayList<BuildingLevel> levels = new ArrayList<>();
+        String sql = "select * from building_level where bl_building=?";
+        PreparedStatement stmt = getConnection().prepareStatement(sql);
+        stmt.setInt(1, buildingId);
+        ResultSet res = stmt.executeQuery();
+        while (res.next()){
+            BuildingLevel bl = new BuildingLevel();
+            bl.setLevel(res.getInt("bl_level"));
+            bl.setRecipe(getRecipe(res.getInt("bl_recipe")));
+            levels.add(bl);
+        }
+        res.close();
+        stmt.close();
+        return levels;
+    }
+
+    public Recipe getRecipe(int id) throws SQLException {
+        Recipe r = new Recipe();
+        String sql = "select * from recipe_item join recipe on recipe_id=ri_recipe where ri_recipe=?";
+        PreparedStatement stmt = getConnection().prepareStatement(sql);
+        stmt.setInt(1, id);
+        ResultSet res = stmt.executeQuery();
+        while (res.next()){
+            r.setId(res.getInt("recipe_id"));
+            r.setName(res.getString("recipe_name"));
+            RecipeItem ri = new RecipeItem();
+            ri.setId(res.getInt("ri_id"));
+            ri.setAmount(res.getInt("ri_amount"));
+            ri.setItem(getItem(res.getInt("ri_item")));
+            r.getRecipeItems().add(ri);
+        }
+        res.close();
+        stmt.close();
+        return r;
+    }
+
+    public ArrayList<AdminUserEntry> adminGetUsers() throws SQLException {
+        ArrayList<AdminUserEntry> users = new ArrayList<>();
+        String sql = "select * from user order by user_level desc";
+        PreparedStatement stmt = getConnection().prepareStatement(sql);
+        ResultSet res = stmt.executeQuery();
+        while (res.next()){
+            AdminUserEntry a = new AdminUserEntry();
+            User u = getUser(res.getString("user_name"));
+            a.setUser(getUser(res.getString("user_name")));
+            RunningQuest q = getRunningQuest(u.getId());
+            if (q!=null){
+                Quest qq = getQuest(q.getQuestId());
+                a.setCurrentQuest(qq);
+                a.setRunningQuest(q);
+            }
+            a.setNextLevelXP(Utils.getNextLevelXP(u.getLevel()));
+            a.setNextLevelPercent(Utils.getNextLevelPercent(u.getXp(), u.getLevel()));
+            users.add(a);
+        }
+        res.close();
+        stmt.close();
+        return users;
+    }
+
+    public void adminFinishQuest(int userId, int questId) throws SQLException {
+        String sql = "update user_quest set uq_end_time=uq_start_time where uq_user=? and uq_quest=?";
+        PreparedStatement stmt = getConnection().prepareStatement(sql);
+        stmt.setInt(1, userId);
+        stmt.setInt(2, questId);
+        stmt.executeUpdate();
+        stmt.close();
     }
 }

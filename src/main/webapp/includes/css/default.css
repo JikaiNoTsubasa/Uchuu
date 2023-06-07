@@ -86,6 +86,7 @@ body{
 
 .u-link:hover{
     color: gray;
+    cursor: pointer;
 }
 
 .u-progress{

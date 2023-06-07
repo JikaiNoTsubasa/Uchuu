@@ -1,6 +1,8 @@
 package fr.triedge.uchuu.api;
 
 
+import fr.triedge.uchuu.model.User;
+import fr.triedge.uchuu.utils.Vars;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -21,5 +23,9 @@ public abstract class AbstractController {
     public HttpServletResponse getHttpRep(){
         ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         return attr.getResponse();
+    }
+
+    public User getUser(){
+        return (User) getSession().getAttribute(Vars.USER);
     }
 }

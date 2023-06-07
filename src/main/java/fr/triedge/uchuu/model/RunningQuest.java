@@ -1,5 +1,7 @@
 package fr.triedge.uchuu.model;
 
+import fr.triedge.uchuu.utils.Utils;
+
 public class RunningQuest {
 
     private int userId, questId, order;
@@ -11,6 +13,10 @@ public class RunningQuest {
             return true;
         }
         return false;
+    }
+
+    public float getPercentage(){
+        return Utils.getPercentage(startTime, endTime, System.currentTimeMillis());
     }
 
     public int getUserId() {

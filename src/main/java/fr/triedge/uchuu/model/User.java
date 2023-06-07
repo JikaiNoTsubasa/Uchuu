@@ -5,6 +5,16 @@ public class User {
     private int id, level, xp;
     private String username;
 
+    private boolean admin;
+
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
+    }
+
     public int getLevel() {
         return level;
     }

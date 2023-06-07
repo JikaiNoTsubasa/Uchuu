@@ -30,7 +30,7 @@
             <div style="margin-top: 30px; font-size: 10px; margin-left: 30px;">
                 <span style="font-weight: bold;">Materiaux de construction:</span>
                 <table>
-                    <tr th:each="d:${quest.plan.building.recipeItems}">
+                    <tr th:each="d:${quest.plan.building.levels[0].recipe.recipeItems}">
                         <td><img th:src="${d.item.img}" style="vertical-align: middle;"/></td>
                         <td th:text="${d.item.name}"></td>
                         <td th:text="${d.amount}"></td>

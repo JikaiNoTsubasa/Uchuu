@@ -5,7 +5,8 @@ create table user(
     user_name varchar(255) not null,
     user_password varchar(1000) not null,
     user_level int default 0,
-    user_xp int default 0
+    user_xp int default 0,
+    user_admin boolean default false
 )ENGINE=InnoDB;
 
 create table item(
@@ -74,37 +75,33 @@ create table inventory(
     foreign key (inv_item) references item(item_id)
 )ENGINE=InnoDB;
 
-create table building_recipe(
-    recipe_building int,
-    recipe_item int,
-    recipe_amount int,
-    foreign key (recipe_building) references building(building_id),
-    foreign key (recipe_item) references item(item_id)
+create table recipe(
+    recipe_id int primary key,
+    recipe_name varchar(255) null default 'Recipe'
 )ENGINE=InnoDB;
 
-create table building_production(
-    prod_building int,
-    prod_item int,
-    prod_amount int,
-    prod_level int,
-    foreign key (prod_building) references building(building_id),
-    foreign key (prod_item) references item(item_id)
+create table recipe_item(
+   ri_id int primary key,
+   ri_recipe int,
+   ri_amount int,
+   ri_item int,
+   foreign key (ri_recipe) references recipe(recipe_id),
+   foreign key (ri_item) references item(item_id)
+)ENGINE=InnoDB;
+
+create table building_level(
+    bl_building int,
+    bl_level int,
+    bl_recipe int,
+    foreign key (bl_recipe) references recipe(recipe_id)
 )ENGINE=InnoDB;
 
 create table user_building(
     ub_user int,
     ub_building int,
-    ub_level int,
+    ub_level int default 0,
     foreign key (ub_user) references user(user_id),
     foreign key (ub_building) references building(building_id)
-)ENGINE=InnoDB;
-
-create table user_plan(
-    up_user int,
-    up_building int,
-    primary key (up_user, up_building),
-    foreign key (up_user) references user(user_id),
-    foreign key (up_building) references building(building_id)
 )ENGINE=InnoDB;
 
 insert into building(building_id, building_name) VALUES (1, 'Maison');
@@ -112,16 +109,24 @@ insert into building(building_id, building_name) VALUES (1, 'Maison');
 insert into item(item_id, item_name, item_value, item_description, item_img)
 values
     (1,'Bois', 1.0, 'Un morceau de bois', 'includes/img/ico_item_wood.png'),
-    (2,'Pierre',1.0,'Un morceau de pierre'),
-    (3,'Charbon',1.2,'Un morceau de chabon'),
-    (4,'Fer Brute',1.5,'Un morceau de fer brute'),
-    (5,'Cuivre Brute',1.6,'Un morceau de cuivre brute'),
-    (6,'Or Brute',2.0,'Un morceau d''or brute');
+    (2,'Pierre',1.0,'Un morceau de pierre', 'includes/img/ico_item_unknown.png'),
+    (3,'Charbon',1.2,'Un morceau de chabon', 'includes/img/ico_item_unknown.png'),
+    (4,'Fer Brute',1.5,'Un morceau de fer brute', 'includes/img/ico_item_unknown.png'),
+    (5,'Cuivre Brute',1.6,'Un morceau de cuivre brute', 'includes/img/ico_item_unknown.png'),
+    (6,'Or Brute',2.0,'Un morceau d''or brute', 'includes/img/ico_item_unknown.png');
 
-insert into building_recipe(recipe_building, recipe_item, recipe_amount)
+insert into recipe(recipe_id, recipe_name)
 VALUES
-    (1,1,50),
-    (1,2,50);
+    (1,'Recette Maison lvl 0');
+
+insert into recipe_item(ri_id, ri_recipe, ri_amount, ri_item)
+VALUES
+    (1,1,50,1),
+    (2,1,50,2);
+
+insert into building_level(bl_building, bl_level, bl_recipe)
+values
+    (1,0,1);
 
 insert into quest(quest_id, quest_name, quest_description, quest_level, quest_duration_min, quest_xp, quest_repeatable, quest_plan)
 values

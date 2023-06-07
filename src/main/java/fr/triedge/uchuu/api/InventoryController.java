@@ -15,7 +15,7 @@ public class InventoryController extends AbstractController{
 
     @GetMapping(Vars.VIEW_INVENTORY)
     public ModelAndView inventory(){
-        ModelAndView model = new ModelAndView();
+        ModelAndView model = new ModelAndView("inventory.html");
         User user = (User) getSession().getAttribute(Vars.USER);
         try{
             Inventory inv = DB.getInstance().getInventory(user);
