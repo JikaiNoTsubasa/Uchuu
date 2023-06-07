@@ -490,6 +490,7 @@ public class DB {
             b.setName(res.getString("building_name"));
             b.setId(res.getInt("building_id"));
             b.setImg(res.getString("building_img"));
+            b.setDescription(res.getString("building_description"));
             b.setLevels(getBuildingLevel(b.getId()));
         }
         res.close();

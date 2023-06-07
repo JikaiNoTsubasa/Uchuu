@@ -5,9 +5,17 @@ import java.util.ArrayList;
 public class Building {
 
     private int id;
-    private String name, img;
+    private String name, img, description;
 
     private ArrayList<BuildingLevel> levels = new ArrayList<>();
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     public String getImg() {
         return img;

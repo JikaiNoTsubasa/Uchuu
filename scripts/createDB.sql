@@ -20,6 +20,7 @@ create table item(
 create table building(
     building_id INT AUTO_INCREMENT PRIMARY KEY,
     building_img varchar(255) default 'includes/img/ico_item_unknown.png',
+    building_description text null,
     building_name varchar(255) not null
 )ENGINE=InnoDB;
 
@@ -105,14 +106,14 @@ create table user_building(
     foreign key (ub_building) references building(building_id)
 )ENGINE=InnoDB;
 
-insert into building(building_id, building_name)
+insert into building(building_id, building_name, building_description)
 VALUES
-    (1, 'Maison'),
-    (2, 'Scierie'),
-    (3, 'Mine de Pierre'),
-    (4, 'Mine de Fer'),
-    (5, 'Mine de Cuivre'),
-    (6, 'Mine d''or');
+    (1, 'Maison', 'Les maisons permettent de faire fonctionner la production des batiments.'),
+    (2, 'Scierie', 'La Scierie permet de produire du bois régulièrement.'),
+    (3, 'Mine de Pierre', 'La mine de pierre permet de produire de la pierre régulièrement.'),
+    (4, 'Mine de Fer', 'La mine de fer permet de produire du fer régulièrement.'),
+    (5, 'Mine de Cuivre', 'La mine de cuivre permet de produire du cuivre régulièrement.'),
+    (6, 'Mine d''or', 'La mine d''or permet de produire de l''or régulièrement.');
 
 insert into item(item_id, item_name, item_value, item_description, item_img)
 values
@@ -129,7 +130,12 @@ VALUES
     (2,'Recette Maison lvl 2'),
     (3,'Recette Maison lvl 3'),
     (4,'Recette Maison lvl 4'),
-    (5,'Recette Maison lvl 5');
+    (5,'Recette Maison lvl 5'),
+    (6,'Recette Scierie lvl 1'),
+    (7,'Recette Scierie lvl 2'),
+    (8,'Recette Scierie lvl 3'),
+    (9,'Recette Scierie lvl 4'),
+    (10,'Recette Scierie lvl 5');
 
 insert into recipe_item(ri_id, ri_recipe, ri_amount, ri_item)
 VALUES
@@ -146,7 +152,27 @@ VALUES
     (8,4,300,2),
 
     (9,5,500,1),
-    (10,5,500,2);
+    (10,5,500,2),
+
+    (11,6,100,1),
+    (12,6,100,2),
+    (13,6,10,4),
+
+    (14,7,200,1),
+    (15,7,200,2),
+    (16,7,20,4),
+
+    (17,8,300,1),
+    (18,8,300,2),
+    (19,8,30,4),
+
+    (20,9,400,1),
+    (21,9,400,2),
+    (22,9,40,4),
+
+    (23,10,600,1),
+    (24,10,600,2),
+    (25,10,60,4);
 
 insert into building_level(bl_building, bl_level, bl_recipe)
 values
@@ -154,7 +180,12 @@ values
     (1,2,2),
     (1,3,3),
     (1,4,4),
-    (1,5,5);
+    (1,5,5),
+    (2,1,6),
+    (2,2,7),
+    (2,3,8),
+    (2,4,9),
+    (2,5,10);
 
 insert into quest(quest_id, quest_name, quest_description, quest_level, quest_duration_min, quest_xp, quest_repeatable, quest_plan)
 values

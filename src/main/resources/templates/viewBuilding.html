@@ -12,6 +12,7 @@
 
     <div th:if="${building != null}" style="margin: 20px;">
         <h1><span th:text="${building.building.name}"></span></h1>
+        <span th:text="${building.building.description}"></span><br>
         Niveau: <span th:text="${building.level}"></span><br>
         <br><br>
         <div th:if="${building.nextLevel != null}">
