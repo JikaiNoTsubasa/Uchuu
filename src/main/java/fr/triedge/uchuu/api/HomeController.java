@@ -32,7 +32,11 @@ public class HomeController extends AbstractController{
 
             RunningQuest rq = DB.getInstance().getRunningQuest(user.getId());
             if (rq != null){
-
+                Quest q = DB.getInstance().getQuest(rq.getQuestId());
+                if (q != null){
+                    model.addObject("currentQuest", q);
+                    model.addObject("runningQuest", rq);
+                }
             }
             int uLevel = user.getLevel();
             List<Quest> quests = allQuests.stream().filter(q -> q.getLevel()<= uLevel).collect(Collectors.toList());

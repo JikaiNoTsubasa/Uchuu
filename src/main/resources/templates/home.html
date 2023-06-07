@@ -28,7 +28,64 @@
     <br><br>
     <div th:if="${quests != null}">
         <h2>Quêtes:</h2>
-        <a class="u-link" style="display: block;" th:each="q:${quests}" th:href="@{${'quest?id=' + q.id}}" th:text="@{${'Niveau: ' + q.level + ' - ' + q.durationDisplay + ' - ' + q.name}}"></a>
+        <div th:if="${currentQuest != null}">
+            <a style="text-decoration:none;color:#222222;" th:href="@{${'quest?id='+currentQuest.id}}">
+                <div class="u-current-quest">
+                    <span class="quest-name" th:text="${currentQuest.name}"></span>
+                    <span class="progress">
+                        <span id="progressQuest" class="u-current-quest-progress"></span>
+                    </span>
+                </div>
+            </a>
+        </div>
+
+        <table class="t-home-quest">
+            <thead>
+                <tr>
+                    <th>Niveau</th>
+                    <th>Durée</th>
+                    <th>Quête</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="q:${quests}">
+                    <td><span th:text="${q.level}"></span></td>
+                    <td><span th:text="${q.durationDisplay}"></span></td>
+                    <td><a class="u-link" th:href="@{${'quest?id=' + q.id}}" th:text="${q.name}"></a></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
+
+<script th:if="${currentQuest}" th:inline="javascript">
+    $("#progressQuest").css("width", '0%');
+    var endTime = /*[[${runningQuest.endTime}]]*/ '0';
+    var startTime = /*[[${runningQuest.startTime}]]*/ '0';
+
+    // Update the count down every 1 second
+    var x = setInterval(function() {
+
+        // Get today's date and time
+        var now = new Date().getTime();
+
+        var end = endTime - startTime;
+        var val = now - startTime;
+        var perc = ((val/end)*100);
+
+        $("#progressQuest").css("width", perc+'%');
+
+        // If the count down is finished, write some text
+        if (now > endTime) {
+            clearInterval(x);
+            $("#progressQuest").css("width", '100%');
+            blink();
+        }
+    }, 1000);
+
+    function blink(){
+        $("#progressQuest").fadeOut(500).fadeIn(500, blink);
+    }
+
+</script>
 </body>
 </html>

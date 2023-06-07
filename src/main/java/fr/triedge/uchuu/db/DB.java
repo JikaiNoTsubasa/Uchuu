@@ -97,14 +97,9 @@ public class DB {
         PreparedStatement stmt = getConnection().prepareStatement(sql);
         ResultSet res = stmt.executeQuery();
         while (res.next()){
-            Quest q = new Quest();
-            q.setId(res.getInt("quest_id"));
-            q.setName(res.getString("quest_name"));
-            q.setDescription(res.getString("quest_description"));
-            q.setLevel(res.getInt("quest_level"));
-            q.setDuration(res.getInt("quest_duration_min"));
-            q.setXp(res.getInt("quest_xp"));
-            q.setDrops(getDropsForQuest(q.getId()));
+            Quest q = getQuest(res.getInt("quest_id"));
+            if (q == null)
+                continue;
             quests.add(q);
         }
         res.close();
@@ -127,6 +122,7 @@ public class DB {
             q.setDuration(res.getInt("quest_duration_min"));
             q.setXp(res.getInt("quest_xp"));
             q.setDrops(getDropsForQuest(q.getId()));
+            q.setRepeatable(res.getBoolean("quest_repeatable"));
         }
         res.close();
         stmt.close();
@@ -187,12 +183,8 @@ public class DB {
         PreparedStatement stmt = getConnection().prepareStatement(sql);
         stmt.setInt(1, userId);
         ResultSet res = stmt.executeQuery();
-        int order = 0;
         boolean isQuestAlreadyRunning = false;
-        Timestamp ts = new Timestamp(new java.util.Date().getTime());
         while (res.next()){
-            order = res.getInt("uq_order") + 1;
-            ts = res.getTimestamp("uq_end_time");
             int qId = res.getInt("uq_quest");
             if (questId == qId)
                 isQuestAlreadyRunning = true;
@@ -207,7 +199,7 @@ public class DB {
         stmt = getConnection().prepareStatement(ins);
         stmt.setInt(1, userId);
         stmt.setInt(2, questId);
-        stmt.setInt(3, order);
+        stmt.setInt(3, 0);
 
         long currentMillis = System.currentTimeMillis();
         long millis = currentMillis + (quest.getDuration() * 1000*60);

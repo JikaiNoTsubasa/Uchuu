@@ -8,7 +8,16 @@ public class Quest {
 
     private int id, level, duration, xp;
     private String name, description;
+    private boolean repeatable;
     private ArrayList<Drop> drops = new ArrayList<>();
+
+    public boolean isRepeatable() {
+        return repeatable;
+    }
+
+    public void setRepeatable(boolean repeatable) {
+        this.repeatable = repeatable;
+    }
 
     public int getXp() {
         return xp;

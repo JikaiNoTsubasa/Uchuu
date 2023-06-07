@@ -22,7 +22,8 @@ create table quest(
     quest_description text not null,
     quest_level int,
     quest_duration_min int,
-    quest_xp int
+    quest_xp int,
+    quest_repeatable boolean default true
 )ENGINE=InnoDB;
 
 create table quest_drop(
@@ -47,6 +48,16 @@ create table user_quest(
     foreign key (uq_quest) references quest(quest_id)
 )ENGINE=InnoDB;
 
+create table quest_done(
+   uq_user int,
+   uq_quest int,
+   uq_start_time timestamp default CURRENT_TIMESTAMP,
+   uq_end_time timestamp default CURRENT_TIMESTAMP,
+   primary key (uq_user, uq_quest),
+   foreign key (uq_user) references user(user_id),
+   foreign key (uq_quest) references quest(quest_id)
+)ENGINE=InnoDB;
+
 create table inventory(
     inv_id INT AUTO_INCREMENT PRIMARY KEY,
     inv_user int,
@@ -54,6 +65,36 @@ create table inventory(
     inv_amount int,
     foreign key (inv_user) references user(user_id),
     foreign key (inv_item) references item(item_id)
+)ENGINE=InnoDB;
+
+create table building(
+    building_id INT AUTO_INCREMENT PRIMARY KEY,
+    building_name varchar(255) not null
+)ENGINE=InnoDB;
+
+create table building_recipe(
+    recipe_building int,
+    recipe_item int,
+    recipe_amount int,
+    foreign key (recipe_building) references building(building_id),
+    foreign key (recipe_item) references item(item_id)
+)ENGINE=InnoDB;
+
+create table building_production(
+    prod_building int,
+    prod_item int,
+    prod_amount int,
+    prod_level int,
+    foreign key (prod_building) references building(building_id),
+    foreign key (prod_item) references item(item_id)
+)ENGINE=InnoDB;
+
+create table user_building(
+    ub_user int,
+    ub_building int,
+    ub_level int,
+    foreign key (ub_user) references user(user_id),
+    foreign key (ub_building) references building(building_id)
 )ENGINE=InnoDB;
 
 insert into item(item_name, item_value, item_description, item_img)
@@ -70,8 +111,8 @@ values
     ('Couper du bois dans la forêt', 'Vous allez couper du bois en forêt', 0, 1, 5),
     ('Ramasser du bois et des pierres', 'Vous allez ramasser du bois et des pierres en forêt', 1, 2, 6),
     ('Mine Niveau I', 'Vous allez à la mine au premier sous sol', 2, 5, 10),
-    ('Mine Niveau II', 'Vous allez à la mine au deuxième sous sol', 3, 8, 15),
-    ('Mine Niveau III', 'Vous allez à la mine au troisième sous sol', 4, 12, 20);
+    ('Mine Niveau II', 'Vous allez à la mine au deuxième sous sol', 3, 8, 40),
+    ('Mine Niveau III', 'Vous allez à la mine au troisième sous sol', 4, 12, 50);
 
 insert into quest_drop(drop_item, drop_quest, drop_amount_min, drop_amount_max, drop_chance)
 values
