@@ -14,15 +14,32 @@
         Niveau: <span th:text="${quest.level}"></span> - Durée: <span th:text="${quest.durationDisplay}"></span><br>
         <p th:text="${quest.description}"></p><br>
         XP: <span th:text="${quest.xp}"></span>
-        <h3>Drops:</h3>
-        <table>
-            <tr th:each="d:${quest.drops}">
-                <td><img th:src="${d.item.img}" style="vertical-align: middle;"/></td>
-                <td th:text="${d.item.name}"></td>
-                <td th:text="@{${'['+d.min+'-'+d.max+']'}}"></td>
-                <td th:text="@{${d.chance+'%'}}"></td>
-            </tr>
-        </table>
+        <div th:if="${not #lists.isEmpty(quest.drops)}">
+            <h3>Drops:</h3>
+            <table>
+                <tr th:each="d:${quest.drops}">
+                    <td><img th:src="${d.item.img}" style="vertical-align: middle;"/></td>
+                    <td th:text="${d.item.name}"></td>
+                    <td th:text="@{${'['+d.min+'-'+d.max+']'}}"></td>
+                    <td th:text="@{${d.chance+'%'}}"></td>
+                </tr>
+            </table>
+        </div>
+        <div th:if="${quest.plan != null}">
+            <h3>Plan: <span th:text="${quest.plan.building.name}"></span></h3>
+            <div style="margin-top: 30px; font-size: 10px; margin-left: 30px;">
+                <span style="font-weight: bold;">Materiaux de construction:</span>
+                <table>
+                    <tr th:each="d:${quest.plan.building.recipeItems}">
+                        <td><img th:src="${d.item.img}" style="vertical-align: middle;"/></td>
+                        <td th:text="${d.item.name}"></td>
+                        <td th:text="${d.amount}"></td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+
         <br><br>
         <a th:if="${finished}" th:href="@{${'questfinished?id='+quest.id}}" class="u-button-finished">Récupérer</a>
         <a style="display:none;" th:href="@{${'questfinished?id='+quest.id}}" class="u-button-finished" id="finished">Récupérer</a>

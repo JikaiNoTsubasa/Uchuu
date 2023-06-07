@@ -11,6 +11,16 @@ public class Quest {
     private boolean repeatable;
     private ArrayList<Drop> drops = new ArrayList<>();
 
+    private Plan plan;
+
+    public Plan getPlan() {
+        return plan;
+    }
+
+    public void setPlan(Plan plan) {
+        this.plan = plan;
+    }
+
     public boolean isRepeatable() {
         return repeatable;
     }
@@ -56,6 +66,8 @@ public class Quest {
     }
 
     public String getName() {
+        if (!isRepeatable())
+            return "[Unique] "+name;
         return name;
     }
 

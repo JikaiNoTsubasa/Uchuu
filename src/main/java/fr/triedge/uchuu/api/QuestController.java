@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 @RestController
 public class QuestController extends AbstractController{
@@ -45,7 +46,7 @@ public class QuestController extends AbstractController{
                             }
 
                     }else{
-                        model.addObject("error", "Votre niveau est insufisant.");
+                        model.addObject("error", "Les conditions ne sont pas remplies.");
                     }
                 }else{
                     model.addObject("error", "Quête non trouvée.");
@@ -114,18 +115,24 @@ public class QuestController extends AbstractController{
     }
 
     private boolean conditionMet(Quest quest){
+        boolean result = false;
         if (quest == null)
             return false;
         User user = (User) getSession().getAttribute(Vars.USER);
         try {
             User u = DB.getInstance().getUser(user.getUsername());
             if (u.getLevel() >= quest.getLevel())
-                return true;
+                result =  true;
 
+            if (!quest.isRepeatable()){
+                ArrayList<Integer> list = DB.getInstance().getQuestsDoneIdsForUser(u.getId());
+                if (list.contains(quest.getId()))
+                    result = false;
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return false;
+        return result;
     }
 
 }

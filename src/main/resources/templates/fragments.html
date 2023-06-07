@@ -8,6 +8,7 @@
 <section th:fragment="menu">
     <div class="u-menu">
         <a href="inventory">Inventaire</a>
+        <a th:if="${session.user.level >= 5}" href="building">Construction</a>
         <a href="disconnect">Disconnect</a>
     </div>
 </section>

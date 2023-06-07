@@ -1,7 +1,6 @@
 package fr.triedge.uchuu.api;
 
 import fr.triedge.uchuu.db.DB;
-import fr.triedge.uchuu.model.Model;
 import fr.triedge.uchuu.model.Quest;
 import fr.triedge.uchuu.model.RunningQuest;
 import fr.triedge.uchuu.model.User;
@@ -24,10 +23,10 @@ public class HomeController extends AbstractController{
         ModelAndView model = new ModelAndView("home.html");
 
         try {
-            ArrayList<Quest> allQuests = DB.getInstance().getAllQuests();//Model.getInstance().getQuests();
             User user = (User) getSession().getAttribute(Vars.USER);
             user = DB.getInstance().getUser(user.getUsername());
             getSession().setAttribute(Vars.USER, user);
+            ArrayList<Quest> allQuests = DB.getInstance().getAllQuests(user);//Model.getInstance().getQuests();
             model.addObject("user", user);
 
             RunningQuest rq = DB.getInstance().getRunningQuest(user.getId());

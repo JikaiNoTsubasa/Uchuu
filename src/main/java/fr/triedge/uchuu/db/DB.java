@@ -91,20 +91,41 @@ public class DB {
         return user;
     }
 
-    public ArrayList<Quest> getAllQuests() throws SQLException {
+    public ArrayList<Quest> getAllQuests(User user) throws SQLException {
+        ArrayList<Integer> doneIds = getQuestsDoneIdsForUser(user.getId());
         ArrayList<Quest> quests = new ArrayList<>();
         String sql = "select * from quest order by quest_level";
         PreparedStatement stmt = getConnection().prepareStatement(sql);
         ResultSet res = stmt.executeQuery();
         while (res.next()){
-            Quest q = getQuest(res.getInt("quest_id"));
-            if (q == null)
+            int questId = res.getInt("quest_id");
+            if (doneIds.contains(questId)){
                 continue;
+            }
+            Quest q = getQuest(questId);
+            if (q == null) {
+                continue;
+            }
             quests.add(q);
         }
         res.close();
         stmt.close();
         return quests;
+    }
+
+    public ArrayList<Integer> getQuestsDoneIdsForUser(int userId) throws SQLException {
+        ArrayList<Integer> ids = new ArrayList<>();
+        String sql = "select * from quest_done where qd_user=?";
+        PreparedStatement stmt = getConnection().prepareStatement(sql);
+        stmt.setInt(1, userId);
+        ResultSet res = stmt.executeQuery();
+        while (res.next()){
+            int id = res.getInt("qd_quest");
+            ids.add(id);
+        }
+        res.close();
+        stmt.close();
+        return ids;
     }
 
     public Quest getQuest(int id) throws SQLException {
@@ -123,10 +144,43 @@ public class DB {
             q.setXp(res.getInt("quest_xp"));
             q.setDrops(getDropsForQuest(q.getId()));
             q.setRepeatable(res.getBoolean("quest_repeatable"));
+            q.setPlan(getPlan(res.getInt("quest_plan")));
         }
         res.close();
         stmt.close();
         return q;
+    }
+
+    public Plan getPlan(int planId) throws SQLException {
+        Plan p = null;
+        String sql = "select * from building where building_id=?";
+        PreparedStatement stmt = getConnection().prepareStatement(sql);
+        stmt.setInt(1, planId);
+        ResultSet res = stmt.executeQuery();
+        if (res.next()){
+            p = new Plan();
+            Building b = new Building();
+            b.setId(res.getInt("building_id"));
+            b.setName(res.getString("building_name"));
+            b.setRecipeItems(getRecipeForBuilding(b.getId()));
+            p.setBuilding(b);
+        }
+        return p;
+    }
+
+    public ArrayList<BuildingRecipeItem> getRecipeForBuilding(int buildingId) throws SQLException {
+        ArrayList<BuildingRecipeItem> list = new ArrayList<>();
+        String sql = "select * from building_recipe where recipe_building=?";
+        PreparedStatement stmt = getConnection().prepareStatement(sql);
+        stmt.setInt(1, buildingId);
+        ResultSet res = stmt.executeQuery();
+        while(res.next()){
+            BuildingRecipeItem r = new BuildingRecipeItem();
+            r.setItem(getItem(res.getInt("recipe_item")));
+            r.setAmount(res.getInt("recipe_amount"));
+            list.add(r);
+        }
+        return list;
     }
 
     public ArrayList<Drop> getDropsForQuest(int questId) throws SQLException {
@@ -302,8 +356,35 @@ public class DB {
             }
         }
 
+        if (!quest.isRepeatable()){
+            RunningQuest rq = getRunningQuest(userId, quest.getId());
+            setQuestDone(userId, quest.getId(), rq.getStartTime(), rq.getEndTime());
+            if (quest.getPlan() != null){
+                addPlanToUser(userId, quest.getPlan().getBuilding().getId());
+            }
+        }
         removeRunningQuest(userId, quest.getId());
         return report;
+    }
+
+    public void setQuestDone(int userId, int questId, long startTime, long endTime) throws SQLException {
+        String sql = "insert into quest_done(qd_user,qd_quest,qd_start_time,qd_end_time)values(?,?,?,?)";
+        PreparedStatement stmt = getConnection().prepareStatement(sql);
+        stmt.setInt(1, userId);
+        stmt.setInt(2, questId);
+        stmt.setTimestamp(3, new Timestamp(startTime));
+        stmt.setTimestamp(4, new Timestamp(endTime));
+        stmt.executeUpdate();
+        stmt.close();
+    }
+
+    public void addPlanToUser(int userId, int buildingId) throws SQLException {
+        String sql = "insert into user_plan(up_user,up_building)values(?,?)";
+        PreparedStatement stmt = getConnection().prepareStatement(sql);
+        stmt.setInt(1, userId);
+        stmt.setInt(2, buildingId);
+        stmt.executeUpdate();
+        stmt.close();
     }
 
     public void addXp(int userId, int xp) throws SQLException {

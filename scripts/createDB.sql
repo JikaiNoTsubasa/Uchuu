@@ -16,6 +16,11 @@ create table item(
     item_img varchar(255) default 'includes/img/ico_item_unknown.png'
 )ENGINE=InnoDB;
 
+create table building(
+    building_id INT AUTO_INCREMENT PRIMARY KEY,
+    building_name varchar(255) not null
+)ENGINE=InnoDB;
+
 create table quest(
     quest_id INT AUTO_INCREMENT PRIMARY KEY,
     quest_name varchar(255) not null,
@@ -23,7 +28,9 @@ create table quest(
     quest_level int,
     quest_duration_min int,
     quest_xp int,
-    quest_repeatable boolean default true
+    quest_repeatable boolean default true,
+    quest_plan int null default null,
+    foreign key (quest_plan) references building(building_id)
 )ENGINE=InnoDB;
 
 create table quest_drop(
@@ -49,13 +56,13 @@ create table user_quest(
 )ENGINE=InnoDB;
 
 create table quest_done(
-   uq_user int,
-   uq_quest int,
-   uq_start_time timestamp default CURRENT_TIMESTAMP,
-   uq_end_time timestamp default CURRENT_TIMESTAMP,
-   primary key (uq_user, uq_quest),
-   foreign key (uq_user) references user(user_id),
-   foreign key (uq_quest) references quest(quest_id)
+   qd_user int,
+   qd_quest int,
+   qd_start_time timestamp default CURRENT_TIMESTAMP,
+   qd_end_time timestamp default CURRENT_TIMESTAMP,
+   primary key (qd_user, qd_quest),
+   foreign key (qd_user) references user(user_id),
+   foreign key (qd_quest) references quest(quest_id)
 )ENGINE=InnoDB;
 
 create table inventory(
@@ -65,11 +72,6 @@ create table inventory(
     inv_amount int,
     foreign key (inv_user) references user(user_id),
     foreign key (inv_item) references item(item_id)
-)ENGINE=InnoDB;
-
-create table building(
-    building_id INT AUTO_INCREMENT PRIMARY KEY,
-    building_name varchar(255) not null
 )ENGINE=InnoDB;
 
 create table building_recipe(
@@ -97,43 +99,60 @@ create table user_building(
     foreign key (ub_building) references building(building_id)
 )ENGINE=InnoDB;
 
-insert into item(item_name, item_value, item_description, item_img)
-values
-    ('Bois', 1.0, 'Un morceau de bois', 'includes/img/ico_item_wood.png'),
-    ('Pierre',1.0,'Un morceau de pierre'),
-    ('Charbon',1.2,'Un morceau de chabon'),
-    ('Fer Brute',1.5,'Un morceau de fer brute'),
-    ('Cuivre Brute',1.6,'Un morceau de cuivre brute'),
-    ('Or Brute',2.0,'Un morceau d''or brute');
+create table user_plan(
+    up_user int,
+    up_building int,
+    primary key (up_user, up_building),
+    foreign key (up_user) references user(user_id),
+    foreign key (up_building) references building(building_id)
+)ENGINE=InnoDB;
 
-insert into quest(quest_name, quest_description, quest_level, quest_duration_min, quest_xp)
+insert into building(building_id, building_name) VALUES (1, 'Maison');
+
+insert into item(item_id, item_name, item_value, item_description, item_img)
 values
-    ('Couper du bois dans la forêt', 'Vous allez couper du bois en forêt', 0, 1, 5),
-    ('Ramasser du bois et des pierres', 'Vous allez ramasser du bois et des pierres en forêt', 1, 2, 6),
-    ('Mine Niveau I', 'Vous allez à la mine au premier sous sol', 2, 5, 10),
-    ('Mine Niveau II', 'Vous allez à la mine au deuxième sous sol', 3, 8, 40),
-    ('Mine Niveau III', 'Vous allez à la mine au troisième sous sol', 4, 12, 50);
+    (1,'Bois', 1.0, 'Un morceau de bois', 'includes/img/ico_item_wood.png'),
+    (2,'Pierre',1.0,'Un morceau de pierre'),
+    (3,'Charbon',1.2,'Un morceau de chabon'),
+    (4,'Fer Brute',1.5,'Un morceau de fer brute'),
+    (5,'Cuivre Brute',1.6,'Un morceau de cuivre brute'),
+    (6,'Or Brute',2.0,'Un morceau d''or brute');
+
+insert into building_recipe(recipe_building, recipe_item, recipe_amount)
+VALUES
+    (1,1,50),
+    (1,2,50);
+
+insert into quest(quest_id, quest_name, quest_description, quest_level, quest_duration_min, quest_xp, quest_repeatable, quest_plan)
+values
+    (1,'Couper du bois dans la forêt', 'Vous allez couper du bois en forêt.', 0, 1, 5, true, null),
+    (2,'Ramasser du bois et des pierres', 'Vous allez ramasser du bois et des pierres en forêt.', 1, 2, 6, true, null),
+    (3,'Mine Niveau I', 'Vous allez à la mine au premier sous sol.', 2, 5, 10, true, null),
+    (4,'Mine Niveau II', 'Vous allez à la mine au deuxième sous sol.', 3, 8, 40, true, null),
+    (5,'Mine Niveau III', 'Vous allez à la mine au troisième sous sol.', 4, 12, 50, true, null),
+    (6,'Apprentissage: Maison', 'Vous apprennez a construire une maison. Une fois cette quête réalisé, vous pourrez construire des maisons.', 5, 30, 100, false, 1);
 
 insert into quest_drop(drop_item, drop_quest, drop_amount_min, drop_amount_max, drop_chance)
 values
-    ((select item_id from item where item_name='Bois'),(select quest_id from quest where quest_name='Couper du bois dans la forêt'),1,5,90),
+    (1,1,1,5,90),
 
-    ((select item_id from item where item_name='Bois'),(select quest_id from quest where quest_name='Ramasser du bois et des pierres'),1,3,80),
-    ((select item_id from item where item_name='Pierre'),(select quest_id from quest where quest_name='Ramasser du bois et des pierres'),2,5,80),
+    (1,2,1,3,80),
+    (2,2,2,5,80),
 
-    ((select item_id from item where item_name='Pierre'),(select quest_id from quest where quest_name='Mine Niveau I'),5,10,80),
-    ((select item_id from item where item_name='Charbon'),(select quest_id from quest where quest_name='Mine Niveau I'),1,5,10),
-    ((select item_id from item where item_name='Fer Brute'),(select quest_id from quest where quest_name='Mine Niveau I'),1,3,1),
-    ((select item_id from item where item_name='Cuivre Brute'),(select quest_id from quest where quest_name='Mine Niveau I'),1,1,0.2),
+    (2,3,5,10,80),
+    (3,3,1,5,10),
+    (4,3,1,3,1),
+    (5,3,1,1,0.2),
 
-    ((select item_id from item where item_name='Pierre'),(select quest_id from quest where quest_name='Mine Niveau II'),10,20,80),
-    ((select item_id from item where item_name='Charbon'),(select quest_id from quest where quest_name='Mine Niveau II'),5,10,30),
-    ((select item_id from item where item_name='Fer Brute'),(select quest_id from quest where quest_name='Mine Niveau II'),2,6,5),
-    ((select item_id from item where item_name='Cuivre Brute'),(select quest_id from quest where quest_name='Mine Niveau II'),2,6,5),
-    ((select item_id from item where item_name='Or Brute'),(select quest_id from quest where quest_name='Mine Niveau II'),1,5,1),
+    (2,4,10,20,80),
+    (3,4,5,10,30),
+    (4,4,2,6,5),
+    (5,4,2,6,5),
+    (6,4,1,5,1),
 
-    ((select item_id from item where item_name='Pierre'),(select quest_id from quest where quest_name='Mine Niveau III'),15,20,80),
-    ((select item_id from item where item_name='Charbon'),(select quest_id from quest where quest_name='Mine Niveau III'),10,15,50),
-    ((select item_id from item where item_name='Fer Brute'),(select quest_id from quest where quest_name='Mine Niveau III'),8,12,30),
-    ((select item_id from item where item_name='Cuivre Brute'),(select quest_id from quest where quest_name='Mine Niveau III'),11,12,20),
-    ((select item_id from item where item_name='Or Brute'),(select quest_id from quest where quest_name='Mine Niveau III'),4,8,5);
+    (2,5,15,20,80),
+    (3,5,10,15,50),
+    (4,5,8,12,30),
+    (5,5,11,12,20),
+    (6,5,4,8,5);
+
