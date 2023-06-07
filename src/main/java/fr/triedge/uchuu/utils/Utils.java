@@ -44,12 +44,15 @@ public class Utils {
         return currentXP * 100 / nextXP;
     }
 
-    public static float getPercentage(float start,float end,float val){
+    public static float getPercentage(long start,long end,long val){
         if (val > end)
-            return 100;
-        end = end- start;
+            return 100f;
+        if (val <= start)
+            return 0f;
+        end = end - start;
         val = val - start;
-        return((1-(val/end))*100);
+        float res = (float)val/end;
+        return res * 100f;
     }
 
 }
