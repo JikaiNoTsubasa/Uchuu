@@ -216,6 +216,7 @@ public class DB {
             i.setValue(res.getFloat("item_value"));
             i.setDescription(res.getString("item_description"));
             i.setImg(res.getString("item_img"));
+            i.setForgeable(res.getBoolean("item_forgeable"));
         }
         res.close();
         stmt.close();

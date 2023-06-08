@@ -25,6 +25,10 @@
                 </tr>
             </table>
         </div>
+        <br><br>
+        <span th:if="${building.started==false && building.level>0}" class="u-button">Démarrer</span>
+        <span th:if="${building.started==true && building.level>0}" class="u-button">Arrêter</span>
+        <span th:if="${building.level<=0}" class="u-button-disabled">Démarrer (Niveau requis 1)</span>
 
     </div>
 

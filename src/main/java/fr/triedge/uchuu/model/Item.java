@@ -5,6 +5,16 @@ public class Item {
     private String name, description, img;
     private float value;
 
+    private boolean forgeable;
+
+    public boolean isForgeable() {
+        return forgeable;
+    }
+
+    public void setForgeable(boolean forgeable) {
+        this.forgeable = forgeable;
+    }
+
     public String getImg() {
         return img;
     }

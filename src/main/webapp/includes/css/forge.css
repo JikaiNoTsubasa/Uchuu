@@ -1,0 +1,59 @@
+.u-inventory{
+    width: 100%;
+    height:100px;
+    overflow-y: scroll;
+    border: 2px solid #222222;
+}
+
+.u-inventory-item{
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+    margin: 5px 0px 0px 5px;
+}
+
+.t-inv-item{
+    margin: 0;
+    padding: 0;
+    width: 60px;
+    font-size: 10px;
+    border-collapse: collapse;
+    border-spacing: 0px;
+    border: 1px solid #222222;
+}
+
+.t-amount{
+    display: block;
+    height: 30px;
+    line-height: 30px;
+    width: 30px;
+    background-color: #222222;
+    color: #FFFFFF;
+    text-align: center;
+}
+
+.t-item-cell{
+    width: 100%;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    display: inline-block;
+}
+
+.u-forge-slot{
+    border:1px dashed #222222;
+    width: 50px;
+    height: 50px;
+    display: block;
+}
+
+.u-clear{
+    text-decoration: none;
+    color: #222222;
+    font-size: 10px;
+}
+
+.u-clear:hover{
+    color: gray;
+    cursor: pointer;
+}

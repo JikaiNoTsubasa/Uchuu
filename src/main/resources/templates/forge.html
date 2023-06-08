@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.w3.org/1999/html">
+<head>
+    <title>Uchuu - Forge</title>
+    <th:block th:insert="~{fragments::meta}"></th:block>
+    <link rel="stylesheet" href="includes/css/forge.css" />
+    <script src="includes/js/forge.js"></script>
+</head>
+<body>
+<a class="u-button" href="home">HOME</a>
+<div th:if="${error}">
+    <span style="color:red" th:text="${error}"></span>
+</div>
+
+    <div style="width: 50%; margin:50px auto;">
+        <p>Bienvenue à la forge, ici vous pourrez refiner du metal brute en lingot.</p>
+        <br><br>
+        <b>Inventaire:</b><br>
+        <div id="inventory" class="u-inventory">
+            <div th:each="i:${inv.items}" th:id="@{${'item_'+i.item.id}}" th:data-itemid="${i.item.id}" th:data-amount-max="${i.amount}" class="u-inventory-item" draggable="true">
+                <table class="t-inv-item">
+                    <tr>
+                        <td style="width:0.1%;white-space: nowrap;">
+                            <span class="t-level" th:text="${i.amount}"></span>
+                        </td>
+                        <td>
+                            <span class="t-item-cell">
+                                <img th:src="${i.item.img}" />
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <br><br>
+        <div id="forge_slot_1" class="u-forge-slot"></div>
+        <span class="u-clear" data-target="forge_slot_1">Clear</span>
+
+        <br><br>
+        <span class="u-button-disabled">Forge</span>
+
+    </div>
+
+</body>
+</html>

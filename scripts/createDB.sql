@@ -14,6 +14,7 @@ create table item(
     item_name varchar(255) not null,
     item_description text not null,
     item_value float,
+    item_forgeable boolean default false,
     item_img varchar(255) default 'includes/img/ico_item_unknown.png'
 )ENGINE=InnoDB;
 
@@ -116,14 +117,14 @@ VALUES
     (5, 'Mine de Cuivre', 'La mine de cuivre permet de produire du cuivre régulièrement.'),
     (6, 'Mine d''or', 'La mine d''or permet de produire de l''or régulièrement.');
 
-insert into item(item_id, item_name, item_value, item_description, item_img)
+insert into item(item_id, item_name, item_value, item_description, item_img, item_forgeable)
 values
-    (1,'Bois', 1.0, 'Un morceau de bois', 'includes/img/ico_item_wood.png'),
-    (2,'Pierre',1.0,'Un morceau de pierre', 'includes/img/ico_item_unknown.png'),
-    (3,'Charbon',1.2,'Un morceau de chabon', 'includes/img/ico_item_unknown.png'),
-    (4,'Fer Brute',1.5,'Un morceau de fer brute', 'includes/img/ico_item_unknown.png'),
-    (5,'Cuivre Brute',1.6,'Un morceau de cuivre brute', 'includes/img/ico_item_unknown.png'),
-    (6,'Or Brute',2.0,'Un morceau d''or brute', 'includes/img/ico_item_unknown.png');
+    (1,'Bois', 1.0, 'Un morceau de bois', 'includes/img/ico_item_wood.png', false),
+    (2,'Pierre',1.0,'Un morceau de pierre', 'includes/img/ico_item_unknown.png', false),
+    (3,'Charbon',1.2,'Un morceau de chabon', 'includes/img/ico_item_unknown.png', false),
+    (4,'Fer Brute',1.5,'Un morceau de fer brute', 'includes/img/ico_item_unknown.png', true),
+    (5,'Cuivre Brute',1.6,'Un morceau de cuivre brute', 'includes/img/ico_item_unknown.png', true),
+    (6,'Or Brute',2.0,'Un morceau d''or brute', 'includes/img/ico_item_unknown.png', true);
 
 insert into recipe(recipe_id, recipe_name)
 VALUES

@@ -10,6 +10,7 @@ public class Vars {
     public static final String VIEW_ADMIN                                       = "/admin";
     public static final String VIEW_BUILDING                                    = "/building";
     public static final String VIEW_BUILDING_SPECIFIC                           = "/bview";
+    public static final String VIEW_FORGE                                       = "/forge";
     public static final String QUEST_START                                      = "/queststart";
     public static final String QUEST_FINISHED                                   = "/questfinished";
     public static final String DISCONNECT                                       = "/disconnect";
