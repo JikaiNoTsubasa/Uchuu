@@ -42,6 +42,10 @@ public class DB {
         connection = DriverManager.getConnection("jdbc:mysql://"+host+"/uchuu?autoReconnect=true","uchuu",pwd.getDecrypted());
     }
 
+    public void loadInMemory(){
+        //getus
+    }
+
     public void createUser(String username, String password) throws SQLException {
         String sql = "insert into user(user_name, user_password)values(?,?)";
         PreparedStatement stmt = getConnection().prepareStatement(sql);
